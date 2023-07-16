@@ -1,0 +1,8 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "python.formatting.provider": "none",
+    "clang-format.assumeFilename": "hello.java",
+    "editor.formatOnSave": true
+}
