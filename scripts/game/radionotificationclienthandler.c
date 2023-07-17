@@ -6,6 +6,7 @@ enum RadioNotificationRPC {
 #ifndef SERVER
 class RadioNotificationClientHandler {
 	protected ref RadioNotificationSettings m_Settings;
+	ref ScriptInvoker Event_RadioNotification = new ScriptInvoker();
 	void RadioNotificationClientHandler() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.DefaultSettings();
@@ -25,18 +26,31 @@ class RadioNotificationClientHandler {
 				return false;
 			}
 			break;
+
+		case RadioNotificationRPC.RADIONOTIFICATION:
+			if (!RadioNotificationEventRPC(ctx)) {
+				Print("RadioNotificationClientHandler::OnRPC RadioNotificationRPC failed!");
+				return false;
+			}
 		}
 		return true;
 	}
 
 	// Read our configuration from the server
 	bool ConfigurationRPC(ParamsReadContext ctx) {
-		Print("RadioNotificationClientHandler::ConfigurationRPC");
-		if (!ctx.Read(m_Settings.maxDistance))
+		if (!m_Settings.DeserializeRPC(ctx))
 			return false;
-		if (!ctx.Read(m_Settings.baseRadioMultiplier))
+		return true;
+	}
+
+	// Server sent a notification
+	bool RadioNotificationEventRPC(ParamsReadContext ctx) {
+		RadioNotificationEvent e = new RadioNotificationEvent();
+		if (!e.DeserializeRPC(ctx))
 			return false;
-		Print(m_Settings);
+
+		// Pump the event to all the radios near the client
+		Event_RadioNotification.Invoke(e);
 		return true;
 	}
 }

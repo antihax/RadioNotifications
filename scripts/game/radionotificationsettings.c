@@ -20,6 +20,17 @@ class RadioNotificationSettings {
 		delete eventMap;
 	}
 
+	bool SerializeRPC(Serializer ctx) {
+		ctx.Write(maxDistance);
+		ctx.Write(baseRadioMultiplier);
+		return true;
+	}
+	bool DeserializeRPC(Serializer ctx) {
+		ctx.Read(maxDistance);
+		ctx.Read(baseRadioMultiplier);
+		return true;
+	}
+
 	void Load() {
 		if (FileExist(SETTINGS))
 			JsonFileLoader<RadioNotificationSettings>.JsonLoadFile(SETTINGS, this);

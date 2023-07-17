@@ -27,15 +27,21 @@ class RadioNotificationTransmitterContext {
 		// m_VoicePump.Run(15.0, this, "RunRandomVoice", null, true);
 		m_VoiceDequeue = new Timer(CALL_CATEGORY_SYSTEM);
 		m_VoiceDequeue.Run(1.0, this, "RunVoiceDequeue", null, true);
+		GetRadioNotificationClientHandler().Event_RadioNotification.Insert(On_RadioNotification);
 	}
 
 	void ~RadioNotificationTransmitterContext() {
+		GetRadioNotificationClientHandler().Event_RadioNotification.Remove(On_RadioNotification);
 		// m_VoicePump.Stop();
 		m_VoiceDequeue.Stop();
 		if (m_ActiveVoiceSound)
 			m_ActiveVoiceSound.SoundStop();
 		if (m_ActiveNoiseSound)
 			m_ActiveNoiseSound.SoundStop();
+	}
+
+	void On_RadioNotification(RadioNotificationEvent e) {
+		m_RadioNotificationQueue.Insert(e);
 	}
 
 	// NextSegment plays audio in order.
