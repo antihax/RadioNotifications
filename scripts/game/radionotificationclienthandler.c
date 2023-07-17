@@ -1,5 +1,6 @@
 enum RadioNotificationRPC {
-	CONFIGURATION = 0
+	CONFIGURATION = 0,
+	RADIONOTIFICATION
 }
 
 #ifndef SERVER
