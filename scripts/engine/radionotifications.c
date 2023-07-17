@@ -4,16 +4,33 @@ class RadioNotificationsContext {
 };
 
 class RadioNotificationEvent {
-	int preamble = 255;
-	int voice = 0;
-	int noise = 0;
-	int pause = 0;
-	int signature = 255;
+	int preamble;
+	int voice;
+	int noise;
+	int signature;
 	ref array<int> phonetics = {};
-	int lifetime = 0;
+	int pause;
+	int lifetime;
 
 	[NonSerialized()] vector position = "0 0 0";
 	[NonSerialized()] int state = 0;
+
+	void RadioNotificationEvent(int _preamble = 255, int _voice = 0, int _noise = 0, int _signature = 255, array<int> _phonetics = null, int _pause = 0, int _lifetime = 0, vector _position = "0 0 0") {
+		preamble = _preamble;
+		voice = _voice;
+		noise = _noise;
+		signature = _signature;
+		if (_phonetics) {
+			phonetics.InsertAll(_phonetics);
+		}
+		pause = _pause;
+		lifetime = _lifetime;
+		position = _position;
+	}
+
+	void ~RadioNotificationEvent() {
+		delete phonetics;
+	}
 
 	bool SerializeRPC(Serializer ctx) {
 		ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF);
