@@ -1,5 +1,5 @@
 // Our context class for the transmitters.
-class RadioNotification_Transmitter_Context {
+class RadioNotificationTransmitterContext {
 	// Prototype: felt cute, might delete later.
 	// protected ref Timer m_VoicePump;
 	protected ref Timer m_VoiceDequeue;
@@ -20,7 +20,7 @@ class RadioNotification_Transmitter_Context {
 	// Parent
 	protected TransmitterBase m_Transmitter;
 
-	void RadioNotification_Transmitter_Context(TransmitterBase _transmitter) {
+	void RadioNotificationTransmitterContext(TransmitterBase _transmitter) {
 		m_Transmitter = _transmitter;
 		// m_VoicePump = new Timer(CALL_CATEGORY_SYSTEM);
 		// m_VoicePump.Run(15.0, this, "RunRandomVoice", null, true);
@@ -28,7 +28,7 @@ class RadioNotification_Transmitter_Context {
 		m_VoiceDequeue.Run(1.0, this, "RunVoiceDequeue", null, true);
 	}
 
-	void ~RadioNotification_Transmitter_Context() {
+	void ~RadioNotificationTransmitterContext() {
 		// m_VoicePump.Stop();
 		m_VoiceDequeue.Stop();
 		if (m_ActiveVoiceSound)
