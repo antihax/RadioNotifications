@@ -4,6 +4,7 @@ class RadioNotificationManager {
 	protected int m_TransmissionID = 1;
 	protected ref RadioNotificationSettings m_Settings;
 	protected ref map<int, RadioNotificationEvent> m_ActiveEvents = new map<int, RadioNotificationEvent>();
+	protected ref Timer m_NotificationPump;
 
 	void RadioNotificationManager() {
 		m_Settings = new RadioNotificationSettings();
@@ -20,6 +21,13 @@ class RadioNotificationManager {
 		rpc.Write(m_Settings.maxDistance);
 		rpc.Write(m_Settings.baseRadioMultiplier);
 		rpc.Send(player, RPC_ANTIHAX_RADIONOTIFICATIONS, true, player.GetIdentity());
+	}
+
+	void SendRadioNotificationEvent(RadioNotificationEvent e) {
+		// [TODO] Refactor to reuse ScriptRPC
+		ScriptRPC rpc = new ScriptRPC();
+		e.SerializeRPC(rpc);
+		rpc.Send(null, RPC_ANTIHAX_RADIONOTIFICATIONS, true);
 	}
 
 	// Get a unique ID for a transmission

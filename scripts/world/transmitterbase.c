@@ -1,10 +1,10 @@
 modded class TransmitterBase {
 
-	protected ref RadioNotification_Transmitter_Context m_RNTC;
+	protected ref RadioNotificationTransmitterContext m_RNTC;
 
 	void TransmitterBase() {
 		if (GetGame().IsClient())
-			m_RNTC = new RadioNotification_Transmitter_Context(this);
+			m_RNTC = new RadioNotificationTransmitterContext(this);
 	}
 
 	void ~TransmitterBase() { delete m_RNTC; }
