@@ -1,5 +1,5 @@
+#ifndef SERVER
 modded class TransmitterBase {
-
 	protected ref RadioNotificationTransmitterContext m_RNTC;
 
 	void TransmitterBase() {
@@ -21,3 +21,4 @@ modded class TransmitterBase {
 		super.OnWorkStop();
 	}
 }
+#endif

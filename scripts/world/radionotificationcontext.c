@@ -1,3 +1,4 @@
+#ifndef SERVER
 // Our context class for the transmitters.
 class RadioNotificationTransmitterContext {
 	// Prototype: felt cute, might delete later.
@@ -206,3 +207,4 @@ class RadioNotificationTransmitterContext {
 		}
 	}
 }
+#endif
