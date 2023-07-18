@@ -70,8 +70,9 @@ class RadioNotificationTransmitterContext {
 
 		case 1: // Phonetics
 			if (m_CurrentRadioNotificationEvent.phonetics.Count() > 0) {
+				// [TODO] Optimized this.. remove ordered is slow.
 				auto p = m_CurrentRadioNotificationEvent.phonetics.Get(0);
-				m_CurrentRadioNotificationEvent.phonetics.Remove(0);
+				m_CurrentRadioNotificationEvent.phonetics.RemoveOrdered(0);
 				a = "RadioNotification_Voice" + m_CurrentRadioNotificationEvent.voice.ToString() + "_Phonetic" + p.ToString();
 			} else
 				m_CurrentRadioNotificationEvent.state = 2;
