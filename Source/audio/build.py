@@ -11,8 +11,8 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import os
 
-num_voices = 4
-num_samples = 45
+num_voices = 9
+num_samples = 54
 normalization_target = -30.0
 
 # Normalize a chunk to a target amplitude.
