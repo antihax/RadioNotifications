@@ -1,3 +1,13 @@
+/**
+ * RadioNotifications Mod
+ * https://github.com/antihax/RadioNotifications
+ * © 2022 antihax
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
+ *
+ **/
+
 #ifdef SERVER
 modded class BuildingBase {
 	private int m_RadioNotificationID;
@@ -11,7 +21,8 @@ modded class BuildingBase {
 	}
 
 	override void EEDelete(EntityAI parent) {
-		GetRadioNotificationManager().Remove(m_RadioNotificationID);
+		if (m_RadioNotificationID > 0)
+			GetRadioNotificationManager().Remove(m_RadioNotificationID);
 		super.EEDelete(parent);
 	}
 }

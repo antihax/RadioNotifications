@@ -1,7 +1,14 @@
-#define RADIONOTIFICATIONS 1
+/**
+ * RadioNotifications Mod
+ * https://github.com/antihax/RadioNotifications
+ * © 2022 antihax
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
+ *
+ **/
 
-class RadioNotificationsContext {
-};
+#define RADIONOTIFICATIONS 1
 
 class RadioNotificationEvent {
 	int preamble;
@@ -32,10 +39,16 @@ class RadioNotificationEvent {
 		delete phonetics;
 	}
 
+	RadioNotificationEvent Clone() {
+		RadioNotificationEvent e = new RadioNotificationEvent(preamble, voice, noise, signature, phonetics, pause, lifetime, position);
+		e.state = state;
+		return e;
+	}
+
 	bool SerializeRPC(Serializer ctx) {
 		// Pack the 8-bit headers into 32-bit integer
-		ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF);
-		ctx.Write(position);
+		/*1*/ ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF);
+		/*2*/ ctx.Write(position);
 
 		// Pad with empty phonetics until we have a multiple of 4
 		// Since DayZ only allows sending 32 bit numbers we can align the phonetics to 32 bit
@@ -44,11 +57,12 @@ class RadioNotificationEvent {
 		}
 
 		// Pack the pause and packed phonetics length as 16 bit into 32-bit integer
-		ctx.Write((pause & 0xFFFF) << 16) | ((phonetics.Count() / 4) & 0xFFFF);
+		int len = phonetics.Count() / 4;
+		/*3*/ ctx.Write((pause & 0xFFFF) << 16 | len & 0xFFFF);
 
 		// Pack the 8-bit phonetics into 32-bit integers
 		for (int i = 0; i < phonetics.Count(); i += 4) {
-			ctx.Write((phonetics[i] & 0xFF) << 24 | (phonetics[i + 1] & 0xFF) << 16 | (phonetics[i + 2] & 0xFF) << 8 | phonetics[i + 3] & 0xFF);
+			/*n*/ ctx.Write((phonetics[i] & 0xFF) << 24 | (phonetics[i + 1] & 0xFF) << 16 | (phonetics[i + 2] & 0xFF) << 8 | phonetics[i + 3] & 0xFF);
 		}
 
 		return true;
@@ -58,24 +72,36 @@ class RadioNotificationEvent {
 		int p, len;
 
 		// Unpack header 8-bit headers from 32-bit integer
-		ctx.Read(p);
+		/*1*/ ctx.Read(p);
 		preamble = (p >> 24) & 0xFF;
 		voice = (p >> 16) & 0xFF;
 		noise = (p >> 8) & 0xFF;
 		signature = p & 0xFF;
+		/*2*/ ctx.Read(position);
 
-		ctx.Read(p);
+		/*3*/ ctx.Read(p);
 		pause = (p >> 16) & 0xFFFF;
 		len = p & 0xFFFF;
 
-		while (len--) {
-			ctx.Read(p);
-			phonetics.Insert((p >> 24) & 0xFF);
-			phonetics.Insert((p >> 16) & 0xFF);
-			phonetics.Insert((p >> 8) & 0xFF);
-			phonetics.Insert(p & 0xFF);
-		}
+		int prelen = len;
 
+		phonetics = new array<int>;
+		while (len--) {
+			/*n*/ ctx.Read(p);
+			int a, b, c, d;
+			a = (p >> 24) & 0xFF;
+			b = (p >> 16) & 0xFF;
+			c = (p >> 8) & 0xFF;
+			d = p & 0xFF;
+			if (a != 255)
+				phonetics.Insert(a);
+			if (b != 255)
+				phonetics.Insert(b);
+			if (c != 255)
+				phonetics.Insert(c);
+			if (d != 255)
+				phonetics.Insert(d);
+		}
 		return true;
 	}
 }

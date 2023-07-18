@@ -1,3 +1,12 @@
+/**
+ * RadioNotifications Mod
+ * https://github.com/antihax/RadioNotifications
+ * © 2022 antihax
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
+ *
+ **/
 
 #ifdef SERVER
 class RadioNotificationManager {
@@ -10,9 +19,6 @@ class RadioNotificationManager {
 	void RadioNotificationManager() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.Load();
-
-		m_NotificationPump = new Timer(CALL_CATEGORY_SYSTEM);
-		m_NotificationPump.Run(30.0, this, "RunNotificationPump", null, true);
 	}
 
 	void ~RadioNotificationManager() {
@@ -24,11 +30,20 @@ class RadioNotificationManager {
 		if (m_ActiveEvents.Count() == 0)
 			return;
 
-		if (m_EventPointer > m_ActiveEvents.Count())
+		if (m_EventPointer > m_ActiveEvents.Count() - 1)
 			m_EventPointer = 0;
 
-		// RPC OUT
-		m_EventPointer++
+		auto e = m_ActiveEvents.GetElement(m_EventPointer);
+		if (e)
+			SendRadioNotificationEvent(e);
+
+		m_EventPointer++;
+	}
+
+	// StartNotificationPump has to performed after server is live.
+	void StartNotificationPump() {
+		m_NotificationPump = new Timer(CALL_CATEGORY_SYSTEM);
+		m_NotificationPump.Run(30.0, this, "RunNotificationPump", null, true);
 	}
 
 	void SendConfiguration(notnull Man player) {
@@ -48,7 +63,14 @@ class RadioNotificationManager {
 
 	// Get a unique ID for a transmission
 	// Returns zero if the transmission is ignored.
-	int GetNewTransmissionID(string type, vector position) {
+	int GetNewTransmissionID(string type, vector _position) {
+		auto e = m_Settings.GetEvent(type);
+		if (!e)
+			return 0;
+
+		m_ActiveEvents.Insert(m_TransmissionID, e);
+		e.position = _position;
+
 		return ++m_TransmissionID;
 	}
 

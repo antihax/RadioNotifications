@@ -1,8 +1,16 @@
+/**
+ * RadioNotifications Mod
+ * https://github.com/antihax/RadioNotifications
+ * © 2022 antihax
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
+ *
+ **/
+
 #ifndef SERVER
 // Our context class for the transmitters.
 class RadioNotificationTransmitterContext {
-	// Prototype: felt cute, might delete later.
-	// protected ref Timer m_VoicePump;
 	protected ref Timer m_VoiceDequeue;
 	protected ref array<RadioNotificationEvent> m_RadioNotificationQueue = {};
 	protected ref RadioNotificationEvent m_CurrentRadioNotificationEvent;
@@ -13,6 +21,7 @@ class RadioNotificationTransmitterContext {
 	float m_VoiceVolume = 0;
 	float m_NoiseVolume = 0;
 	protected bool m_PlayingNoise = false;
+	protected bool m_PlayingVoice = false;
 
 	// Distance to ignore notifications. Should be a significant distance a
 	// player could not move in the time it takes to play a notification.
@@ -31,8 +40,10 @@ class RadioNotificationTransmitterContext {
 	}
 
 	void ~RadioNotificationTransmitterContext() {
-		GetRadioNotificationClientHandler().Event_RadioNotification.Remove(On_RadioNotification);
-		// m_VoicePump.Stop();
+		// We can race deleting these this stack.
+		if (GetRadioNotificationClientHandler())
+			GetRadioNotificationClientHandler().Event_RadioNotification.Remove(On_RadioNotification);
+
 		m_VoiceDequeue.Stop();
 		if (m_ActiveVoiceSound)
 			m_ActiveVoiceSound.SoundStop();
@@ -41,56 +52,71 @@ class RadioNotificationTransmitterContext {
 	}
 
 	void On_RadioNotification(RadioNotificationEvent e) {
-		m_RadioNotificationQueue.Insert(e);
+		// Make a copy so we don't race playing the same notification.
+		m_RadioNotificationQueue.Insert(e.Clone());
 	}
 
 	// NextSegment plays audio in order.
 	// Event_OnSoundWaveEnded calls again for next segment.
 	// Return is our exit from the loop.
 	void NextSegment() {
-		// Just a shorter name
-		auto s = m_CurrentRadioNotificationEvent;
-
 		string a;
-		switch (s.state) {
+		switch (m_CurrentRadioNotificationEvent.state) {
 		case 0: // Preamble
-			s.state = 1;
-			if (s.preamble >= 0)
-				a = "RadioNotification_Preamble" + s.preamble.ToString();
+			m_CurrentRadioNotificationEvent.state = 1;
+			if (m_CurrentRadioNotificationEvent.preamble >= 0)
+				a = "RadioNotification_Preamble" + m_CurrentRadioNotificationEvent.preamble.ToString();
 			break;
 
 		case 1: // Phonetics
-			if (s.phonetics.Count() > 0) {
-				auto p = s.phonetics.Get(0);
-				s.phonetics.Remove(0);
-				a = "RadioNotification_Voice" + s.voice.ToString() + "_Phonetic" + p.ToString();
+			if (m_CurrentRadioNotificationEvent.phonetics.Count() > 0) {
+				auto p = m_CurrentRadioNotificationEvent.phonetics.Get(0);
+				m_CurrentRadioNotificationEvent.phonetics.Remove(0);
+				a = "RadioNotification_Voice" + m_CurrentRadioNotificationEvent.voice.ToString() + "_Phonetic" + p.ToString();
 			} else
-				s.state = 2;
+				m_CurrentRadioNotificationEvent.state = 2;
 			break;
 
 		case 2: // Signature
-			s.state = 3;
-			if (s.signature >= 0)
-				a = "RadioNotification_Preamble" + s.signature.ToString();
+			m_CurrentRadioNotificationEvent.state = 3;
+			if (m_CurrentRadioNotificationEvent.signature >= 0)
+				a = "RadioNotification_Preamble" + m_CurrentRadioNotificationEvent.signature.ToString();
 			break;
 
 		case 3:
+			Print("RadioNotification: Finished");
 			NoiseStop();
+			delete m_CurrentRadioNotificationEvent;
+			m_CurrentRadioNotificationEvent = null;
 			return; // exit the loop
 		}
 
-		if (a != "")
+		if (a != "") {
 			m_ActiveVoiceSound = PlaySoundSet(a, false, true);
-		else
+		} else
 			NextSegment();
 	}
 
-	void Event_OnSoundWaveStarted() { UpdateVolumes(); }
-	void Event_OnSoundWaveEnded() { NextSegment(); }
+	void Event_OnSoundWaveStarted() {
+		m_PlayingVoice = true;
+	}
+
+	void Event_OnSoundWaveStartedVolumes() {
+		UpdateVolumes();
+	}
+
+	void Event_OnSoundWaveEnded() {
+		if (m_PlayingVoice) {
+			m_PlayingVoice = false;
+			NextSegment();
+		}
+		UpdateVolumes();
+	}
 
 	void NoiseStop() {
 		m_ActiveNoiseSound.SoundStop();
 		m_PlayingNoise = false;
+		UpdateVolumes();
 	}
 
 	// Dequeue and play the next notification in the queue. These will be a
@@ -110,7 +136,7 @@ class RadioNotificationTransmitterContext {
 		m_ActiveNoiseSound = PlaySoundSet(n, true);
 
 		// Start sequencing after the pause
-		GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(this.NextSegment, 1 + (m_CurrentRadioNotificationEvent.pause * 1000), false);
+		GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(NextSegment, 1 + (m_CurrentRadioNotificationEvent.pause * 1000), false);
 	}
 
 	// Prototype, keep for testing.
@@ -146,11 +172,12 @@ class RadioNotificationTransmitterContext {
 		// This is a hack to fix a bug preventing setting volumes on sounds.
 		if (notify) {
 			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStarted);
+			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStartedVolumes);
 			s.Event_OnSoundWaveEnded.Insert(Event_OnSoundWaveEnded);
 		} else {
 			s.Event_OnSoundWaveStarted.Clear();
 			s.Event_OnSoundWaveEnded.Clear();
-			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStarted);
+			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStartedVolumes);
 		}
 
 		return s;
@@ -164,7 +191,7 @@ class RadioNotificationTransmitterContext {
 		static const float MIN_VOLUME = 0.1;
 
 		// [TODO] Make this a config option.
-		static const float MAX_DISTANCE = 5000.0;
+		static const float MAX_DISTANCE = 10000.0;
 
 		// If we are not playing anything, don't bother.
 		if (!m_CurrentRadioNotificationEvent)
