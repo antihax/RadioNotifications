@@ -1,7 +1,7 @@
 /**
  * RadioNotifications Mod
  * https://github.com/antihax/RadioNotifications
- * © 2023 antihax
+ * © 2022 antihax
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
@@ -17,6 +17,8 @@ enum RadioNotificationRPC {
 class RadioNotificationClientHandler {
 	protected ref RadioNotificationSettings m_Settings;
 	ref ScriptInvoker Event_RadioNotification = new ScriptInvoker();
+	protected static const string GRID_SIZE_CFG_PATH = "CfgWorlds %1 Grid Zoom1 stepX";
+
 	void RadioNotificationClientHandler() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.DefaultSettings();
@@ -58,6 +60,37 @@ class RadioNotificationClientHandler {
 		RadioNotificationEvent e = new RadioNotificationEvent();
 		if (!e.DeserializeRPC(ctx))
 			return false;
+
+		// [TODO] find a better place for this and optimize it
+		int gridX, gridZ;
+		float GRID_SIZE = GetGame().ConfigGetFloat(string.Format(GRID_SIZE_CFG_PATH, GetGame().GetWorldName()));
+		GetGame().GetWorld().GetGridCoords(e.position, GRID_SIZE, gridX, gridZ);
+
+		array<int> p = {};
+		for (int i = 0; i < e.phonetics.Count(); i++) {
+			switch (e.phonetics[i]) {
+			case 128: // Position
+				// Replace with grid coords
+				p.Insert(gridX / 100 % 10);
+				p.Insert(gridX / 10 % 10);
+				p.Insert(gridX % 10);
+				p.Insert(48); // East
+
+				p.Insert(gridZ / 100 % 10);
+				p.Insert(gridZ / 10 % 10);
+				p.Insert(gridZ % 10);
+				p.Insert(46); // North
+
+				break;
+			case 255: // Empty
+
+				break;
+			default:
+				p.Insert(e.phonetics[i])
+			}
+		}
+		delete e.phonetics;
+		e.phonetics = p;
 
 		// Pump the event to all the radios near the client
 		Event_RadioNotification.Invoke(e);

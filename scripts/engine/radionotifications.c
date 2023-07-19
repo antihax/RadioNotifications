@@ -47,8 +47,8 @@ class RadioNotificationEvent {
 
 	bool SerializeRPC(Serializer ctx) {
 		// Pack the 8-bit headers into 32-bit integer
-		/*1*/ ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF);
-		/*2*/ ctx.Write(position);
+		ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF);
+		ctx.Write(position);
 
 		// Pad with empty phonetics until we have a multiple of 4
 		// Since DayZ only allows sending 32 bit numbers we can align the phonetics to 32 bit
@@ -58,11 +58,11 @@ class RadioNotificationEvent {
 
 		// Pack the pause and packed phonetics length as 16 bit into 32-bit integer
 		int len = phonetics.Count() / 4;
-		/*3*/ ctx.Write((pause & 0xFFFF) << 16 | len & 0xFFFF);
+		ctx.Write((pause & 0xFFFF) << 16 | len & 0xFFFF);
 
 		// Pack the 8-bit phonetics into 32-bit integers
 		for (int i = 0; i < phonetics.Count(); i += 4) {
-			/*n*/ ctx.Write((phonetics[i] & 0xFF) << 24 | (phonetics[i + 1] & 0xFF) << 16 | (phonetics[i + 2] & 0xFF) << 8 | phonetics[i + 3] & 0xFF);
+			ctx.Write((phonetics[i] & 0xFF) << 24 | (phonetics[i + 1] & 0xFF) << 16 | (phonetics[i + 2] & 0xFF) << 8 | phonetics[i + 3] & 0xFF);
 		}
 
 		return true;
@@ -72,14 +72,14 @@ class RadioNotificationEvent {
 		int p, len;
 
 		// Unpack header 8-bit headers from 32-bit integer
-		/*1*/ ctx.Read(p);
+		ctx.Read(p);
 		preamble = (p >> 24) & 0xFF;
 		voice = (p >> 16) & 0xFF;
 		noise = (p >> 8) & 0xFF;
 		signature = p & 0xFF;
-		/*2*/ ctx.Read(position);
+		ctx.Read(position);
 
-		/*3*/ ctx.Read(p);
+		ctx.Read(p);
 		pause = (p >> 16) & 0xFFFF;
 		len = p & 0xFFFF;
 
@@ -87,7 +87,7 @@ class RadioNotificationEvent {
 
 		phonetics = new array<int>;
 		while (len--) {
-			/*n*/ ctx.Read(p);
+			ctx.Read(p);
 			int a, b, c, d;
 			a = (p >> 24) & 0xFF;
 			b = (p >> 16) & 0xFF;

@@ -1,7 +1,7 @@
 /**
  * RadioNotifications Mod
  * https://github.com/antihax/RadioNotifications
- * © 2023 antihax
+ * © 2022 antihax
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
@@ -70,7 +70,7 @@ class RadioNotificationTransmitterContext {
 
 		case 1: // Phonetics
 			if (m_CurrentRadioNotificationEvent.phonetics.Count() > 0) {
-				// [TODO] Optimized this.. remove ordered is slow.
+
 				auto p = m_CurrentRadioNotificationEvent.phonetics.Get(0);
 				m_CurrentRadioNotificationEvent.phonetics.RemoveOrdered(0);
 				a = "RadioNotification_Voice" + m_CurrentRadioNotificationEvent.voice.ToString() + "_Phonetic" + p.ToString();
@@ -85,7 +85,6 @@ class RadioNotificationTransmitterContext {
 			break;
 
 		case 3:
-			Print("RadioNotification: Finished");
 			NoiseStop();
 			delete m_CurrentRadioNotificationEvent;
 			m_CurrentRadioNotificationEvent = null;
