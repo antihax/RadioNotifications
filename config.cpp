@@ -29,12 +29,34 @@ class CfgMods {
 	};
 };
 
+class CfgSoundCurves {
+	class alarmAttenuationCurve {
+		points[] =
+			{
+				{0, 0.8},
+				{25, 0.3},
+				{150, 0.2},
+				{500, 0.1},
+				{750, 0.05},
+				{1000, 0}};
+	};
+};
+
 class CfgSoundShaders {
 	class RadioNotification_SoundShader {
 		volume = 1;
 		frequency = 1;
 		range = 25;
 		limitation = 0;
+	};
+
+	class RadioNotification_Alarm_SoundShader : RadioNotification_SoundShader {
+		volume = 1;
+		range = 2000;
+	};
+
+	class RadioNotification_Alarm0_SoundShader : RadioNotification_Alarm_SoundShader {
+		samples[] = {{"RadioNotifications\sounds\alarms\0", 1}};
 	};
 
 	class RadioNotification_Preamble0_SoundShader : RadioNotification_SoundShader {
@@ -2014,10 +2036,22 @@ class CfgSoundSets {
 	class RadioNotification_SoundSet {
 		sound3DProcessingType = "character3DProcessingType";
 		volumeCurve = "characterAttenuationCurve";
+
 		spatial = 1;
 		doppler = 0;
 		loop = 0;
 		distanceFilter = "defaultDistanceFilter";
+	};
+
+	class RadioNotification_Alarm_SoundSet : RadioNotification_SoundSet {
+		frequencyRandomizer = 2;
+		volumeCurve = "alarmAttenuationCurve";
+		distanceFilter = "defaultDistanceFreqAttenuationFilter";
+		sound3DProcessingType = "ThunderNear3DProcessingType";
+	};
+
+	class RadioNotification_Alarm0 : RadioNotification_Alarm_SoundSet {
+		soundShaders[] = {"RadioNotification_Alarm0_SoundShader"};
 	};
 
 	class RadioNotification_Preamble0 : RadioNotification_SoundSet {

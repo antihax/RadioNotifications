@@ -139,27 +139,6 @@ class RadioNotificationTransmitterContext {
 		GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(NextSegment, 1 + (m_CurrentRadioNotificationEvent.pause * 1000), false);
 	}
 
-	// Prototype, keep for testing.
-	void RunRandomVoice() {
-		int num_preamble = 3;
-		int num_voices = 3;
-		int num_noise = 3;
-		int num_phonetic = 45;
-
-		auto e = new RadioNotificationEvent();
-		e.preamble = Math.RandomInt(-1, num_preamble);
-		e.signature = Math.RandomInt(-1, num_preamble);
-		e.noise = Math.RandomInt(0, num_noise);
-		e.voice = Math.RandomInt(0, num_voices);
-		e.pause = Math.RandomInt(0, 2);
-		e.position = "13000 10 10000";
-
-		for (int i = 0; i < Math.RandomInt(5, 20); i++) {
-			e.phonetics.Insert(Math.RandomInt(0, num_phonetic));
-		}
-		m_RadioNotificationQueue.Insert(e);
-	}
-
 	EffectSound PlaySoundSet(string voiceName, bool loop = false, bool notify = false) {
 		EffectSound s = SEffectManager.PlaySoundOnObject(voiceName, m_Transmitter);
 		if (!s) {
@@ -185,22 +164,16 @@ class RadioNotificationTransmitterContext {
 
 	// Update the volumes of the active sounds based on distance.
 	void UpdateVolumes() {
-		// We consider the squelch to be the falloff.
-		// Maybe add a random factor to the distance to cause squelch breaking?
-		static const float MAX_VOLUME = 1.0;
-		static const float MIN_VOLUME = 0.1;
-
-		// [TODO] Make this a config option.
-		static const float MAX_DISTANCE = 10000.0;
-
 		// If we are not playing anything, don't bother.
 		if (!m_CurrentRadioNotificationEvent)
 			return;
+		float MAX_VOLUME = GetRadioNotificationClientHandler().m_Settings.maxVolume;
+		float MIN_VOLUME = GetRadioNotificationClientHandler().m_Settings.minVolume;
+		float MAX_DISTANCE = GetRadioNotificationClientHandler().m_Settings.maxDistance;
 
-		// The base radio gets a distance boost.
 		float distanceMultiplier = 1.0;
 		if (m_Transmitter.GetType() == "BaseRadio")
-			distanceMultiplier = 2.5;
+			distanceMultiplier = GetRadioNotificationClientHandler().m_Settings.baseRadioMultiplier;
 
 		// Noise louder the further, voice louder the closer.
 		float distance = Math.AbsFloat(vector.Distance(m_Transmitter.GetPosition(), m_CurrentRadioNotificationEvent.position)) / distanceMultiplier;

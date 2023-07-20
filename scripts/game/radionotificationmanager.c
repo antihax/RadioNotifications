@@ -11,7 +11,7 @@
 #ifdef SERVER
 class RadioNotificationManager {
 	protected int m_TransmissionID = 1;
-	protected ref RadioNotificationSettings m_Settings;
+	ref RadioNotificationSettings m_Settings;
 	protected ref map<int, RadioNotificationEvent> m_ActiveEvents = new map<int, RadioNotificationEvent>();
 	protected int m_EventPointer;
 	protected ref Timer m_NotificationPump;
@@ -54,16 +54,30 @@ class RadioNotificationManager {
 	}
 
 	void SendRadioNotificationEvent(RadioNotificationEvent e) {
-		// [TODO] Refactor to reuse ScriptRPC
 		ScriptRPC rpc = new ScriptRPC();
 		rpc.Write(RadioNotificationRPC.RADIONOTIFICATION);
 		e.SerializeRPC(rpc);
 		rpc.Send(null, RPC_ANTIHAX_RADIONOTIFICATIONS, true);
+		delete rpc;
+	}
+
+	void SendRadioNotificationAlarmEvent(RadioNotificationAlarmEvent e) {
+		ScriptRPC rpc = new ScriptRPC();
+		rpc.Write(RadioNotificationRPC.RADIONOTIFICATIONALARM);
+		e.SerializeRPC(rpc);
+		rpc.Send(null, RPC_ANTIHAX_RADIONOTIFICATIONS, true);
+		delete rpc;
 	}
 
 	// Get a unique ID for a transmission
 	// Returns zero if the transmission is ignored.
 	int GetNewTransmissionID(string type, vector _position) {
+		auto a = m_Settings.GetAlarm(type);
+		if (a) {
+			a.position = _position;
+			SendRadioNotificationAlarmEvent(a);
+		}
+
 		auto e = m_Settings.GetEvent(type);
 		if (!e)
 			return 0;

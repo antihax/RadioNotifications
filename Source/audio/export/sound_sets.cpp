@@ -1,4 +1,9 @@
 
+        class RadioNotification_Alarm0: RadioNotification_Alarm_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Alarm0_SoundShader"};
+        };
+
         class RadioNotification_Preamble0: RadioNotification_SoundSet
         {
             soundShaders[] = {"RadioNotification_Preamble0_SoundShader"};

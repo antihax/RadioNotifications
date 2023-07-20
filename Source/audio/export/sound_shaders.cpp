@@ -1,4 +1,9 @@
 
+        class RadioNotification_Alarm0_SoundShader: RadioNotification_Alarm_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\alarms\0",1}};
+        };
+
         class RadioNotification_Preamble0_SoundShader: RadioNotification_SoundShader
         {
             samples[] = {{"RadioNotifications\sounds\preambles\0",1}};

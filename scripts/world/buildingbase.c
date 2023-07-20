@@ -26,4 +26,17 @@ modded class BuildingBase {
 		super.EEDelete(parent);
 	}
 }
+#else
+modded class AdvancedCommunication {
+	override void EEInit() {
+		super.EEInit();
+
+		if (GetRadioNotificationClientHandler()) {
+			if (!IsInventoryVisible()) // Only PASReceivers
+				GetRadioNotificationClientHandler().RegisterPAS(GetPosition());
+		} else {
+			Print("BuildingBase::EEInit Warning! Handler Unavailable " + GetType() + " " + GetPosition());
+		}
+	}
+}
 #endif

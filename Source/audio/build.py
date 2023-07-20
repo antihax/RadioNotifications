@@ -13,16 +13,17 @@ import os
 
 num_voices = 9
 num_samples = 54
-normalization_target = -30.0
 
 # Normalize a chunk to a target amplitude.
-def match_target_amplitude(aChunk, target_dBFS):
+def match_target_amplitude(aChunk, target_dBFS = -30.0):
     change_in_dBFS = target_dBFS - aChunk.dBFS
     return aChunk.apply_gain(change_in_dBFS)
 
-def convertFile(file: str, type: str, voice: int):
+def convertFile(file: str, type: str, voice: int, volume: float = -30.0):
     audio = AudioSegment.from_wav(file)
-    normalized_chunk = match_target_amplitude(audio, normalization_target)
+    
+    normalized_chunk = match_target_amplitude(audio, volume)
+    
     normalized_chunk.set_channels(1)
     normalized_chunk.export(
         "../../sounds/"+type+"/{0}.ogg".format(voice),
@@ -58,7 +59,7 @@ def split_file_on_silence(voice: int):
         audio_chunk = silence_chunk + chunk + silence_chunk
 
         # Normalize the entire chunk.
-        normalized_chunk = match_target_amplitude(audio_chunk, normalization_target)
+        normalized_chunk = match_target_amplitude(audio_chunk)
 
         # Export the audio chunk with new bitrate.
         print("Exporting {0} {1}.".format(voice, i))
@@ -72,6 +73,25 @@ def split_file_on_silence(voice: int):
 
 sound_shaders = []
 sound_sets = []
+
+print("Converting alarms...")
+c = 0
+for file in os.listdir("./alarms"):
+  if file.endswith(".wav"):
+    convertFile("./alarms/"+file, "alarms", c, -5) 
+    print(c)
+    sound_shaders.append("""
+        class RadioNotification_Alarm%d_SoundShader: RadioNotification_Alarm_SoundShader
+        {
+            samples[] = {{"RadioNotifications\\sounds\\alarms\\%d",1}};
+        };""" % (c, c))
+    
+    sound_sets.append("""
+        class RadioNotification_Alarm%d: RadioNotification_Alarm_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Alarm%d_SoundShader"};
+        };""" % (c, c))    
+    c+=1
 
 print("Converting preambles...")
 c = 0

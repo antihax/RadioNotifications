@@ -10,14 +10,20 @@
 
 enum RadioNotificationRPC {
 	CONFIGURATION = 0,
-	RADIONOTIFICATION
+	RADIONOTIFICATION,
+	RADIONOTIFICATIONALARM,
 }
 
 #ifndef SERVER
 class RadioNotificationClientHandler {
-	protected ref RadioNotificationSettings m_Settings;
+	ref RadioNotificationSettings m_Settings;
 	ref ScriptInvoker Event_RadioNotification = new ScriptInvoker();
+	protected ref array<vector> m_PAS = {};
 	protected static const string GRID_SIZE_CFG_PATH = "CfgWorlds %1 Grid Zoom1 stepX";
+
+	void RegisterPAS(vector loc) {
+		m_PAS.Insert(loc);
+	}
 
 	void RadioNotificationClientHandler() {
 		m_Settings = new RadioNotificationSettings();
@@ -44,7 +50,20 @@ class RadioNotificationClientHandler {
 				Print("RadioNotificationClientHandler::OnRPC RadioNotificationRPC failed!");
 				return false;
 			}
+			break;
+
+		case RadioNotificationRPC.RADIONOTIFICATIONALARM:
+			if (!RadioNotificationAlarmEventRPC(ctx)) {
+				Print("RadioNotificationClientHandler::OnRPC RadioNotificationRPC failed!");
+				return false;
+			}
+			break;
+
+		default:
+			Print("RadioNotificationClientHandler::OnRPC Unknown RPC type " + t);
+			return false;
 		}
+
 		return true;
 	}
 
@@ -52,6 +71,23 @@ class RadioNotificationClientHandler {
 	bool ConfigurationRPC(ParamsReadContext ctx) {
 		if (!m_Settings.DeserializeRPC(ctx))
 			return false;
+		return true;
+	}
+
+	// Server sent a notification
+	bool RadioNotificationAlarmEventRPC(ParamsReadContext ctx) {
+		RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
+		if (!e.DeserializeRPC(ctx))
+			return false;
+		for (int i = 0; i < m_PAS.Count(); i++) {
+			if (vector.Distance(m_PAS[i], e.position) < 250) {
+				Print("Playing alarm at " + e.position.ToString());
+				EffectSound alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), m_PAS[i]);
+				alarm.SetAutodestroy(true);
+				break;
+			}
+		}
+
 		return true;
 	}
 
