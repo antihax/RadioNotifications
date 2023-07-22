@@ -105,7 +105,7 @@ class RadioNotificationClientHandler {
 		array<int> p = {};
 		for (int i = 0; i < e.phonetics.Count(); i++) {
 			switch (e.phonetics[i]) {
-			case 128: // Position
+			case 128: // GridRef 6n w/ cardinals
 				// Replace with grid coords
 				p.Insert(gridX / 100 % 10);
 				p.Insert(gridX / 10 % 10);
@@ -116,8 +116,40 @@ class RadioNotificationClientHandler {
 				p.Insert(gridZ / 10 % 10);
 				p.Insert(gridZ % 10);
 				p.Insert(46); // North
-
 				break;
+
+			case 129: // GridRef 4n w/ cardinals
+				// Replace with grid coords
+				p.Insert(gridX / 100 % 10);
+				p.Insert(gridX / 10 % 10);
+
+				p.Insert(48); // East
+
+				p.Insert(gridZ / 100 % 10);
+				p.Insert(gridZ / 10 % 10);
+				p.Insert(46); // North
+				break;
+
+			case 130: // GridRef 6n w/ cardinals
+				// Replace with grid coords
+				p.Insert(gridX / 100 % 10);
+				p.Insert(gridX / 10 % 10);
+				p.Insert(gridX % 10);
+
+				p.Insert(gridZ / 100 % 10);
+				p.Insert(gridZ / 10 % 10);
+				p.Insert(gridZ % 10);
+				break;
+
+			case 131: // GridRef 4n w/ cardinals
+				// Replace with grid coords
+				p.Insert(gridX / 100 % 10);
+				p.Insert(gridX / 10 % 10);
+
+				p.Insert(gridZ / 100 % 10);
+				p.Insert(gridZ / 10 % 10);
+				break;
+
 			case 255: // Empty
 
 				break;

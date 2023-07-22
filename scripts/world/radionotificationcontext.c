@@ -167,9 +167,11 @@ class RadioNotificationTransmitterContext {
 		// If we are not playing anything, don't bother.
 		if (!m_CurrentRadioNotificationEvent)
 			return;
-		float MAX_VOLUME = GetRadioNotificationClientHandler().m_Settings.maxVolume;
-		float MIN_VOLUME = GetRadioNotificationClientHandler().m_Settings.minVolume;
-		float MAX_DISTANCE = GetRadioNotificationClientHandler().m_Settings.maxDistance;
+
+		// Hopefully this gets optimized out, but for readability sake.
+		const float MAX_VOLUME = GetRadioNotificationClientHandler().m_Settings.maxVolume;
+		const float MIN_VOLUME = GetRadioNotificationClientHandler().m_Settings.minVolume;
+		const float MAX_DISTANCE = GetRadioNotificationClientHandler().m_Settings.maxDistance;
 
 		float distanceMultiplier = 1.0;
 		if (m_Transmitter.GetType() == "BaseRadio")
@@ -181,7 +183,8 @@ class RadioNotificationTransmitterContext {
 		m_NoiseVolume = Math.Clamp(distance / MAX_DISTANCE, MIN_VOLUME, MAX_VOLUME);
 
 		// If the radio is off, or we are too far, silence.
-		if (!m_Transmitter.IsOn() || distance > MAX_DISTANCE) {
+		// If we are not on the right channel, silence (Mask Frequency index, there are flags on it?).
+		if (!m_Transmitter.IsOn() || distance > MAX_DISTANCE || m_Transmitter.GetTunedFrequencyIndex() % 8 != GetRadioNotificationClientHandler().m_Settings.radioChannel) {
 			m_VoiceVolume = 0.0;
 			m_NoiseVolume = 0.0;
 		}
