@@ -18,12 +18,17 @@ class RadioNotificationEvent {
 	int signature;
 	ref array<int> phonetics = {};
 	int pause;
+
+	// Non-replicated
+	int delay;
 	int lifetime;
 
 	[NonSerialized()] vector position = "0 0 0";
 	[NonSerialized()] int state = 0;
+	[NonSerialized()] int ticks = 0;
+	[NonSerialized()] int lastTime = 0;
 
-	void RadioNotificationEvent(int _preamble = 255, int _voice = 0, int _noise = 0, int _signature = 255, array<int> _phonetics = null, int _pause = 0, int _lifetime = 0, vector _position = "0 0 0") {
+	void RadioNotificationEvent(int _preamble = 255, int _voice = 0, int _noise = 0, int _signature = 255, array<int> _phonetics = null, int _pause = 0, int _delay = 60, int _lifetime = 3, vector _position = "0 0 0") {
 		preamble = _preamble;
 		voice = _voice;
 		noise = _noise;
@@ -33,6 +38,7 @@ class RadioNotificationEvent {
 		}
 		pause = _pause;
 		lifetime = _lifetime;
+		delay = _delay;
 		position = _position;
 	}
 
@@ -41,38 +47,33 @@ class RadioNotificationEvent {
 	}
 
 	RadioNotificationEvent Clone() {
-		RadioNotificationEvent e = new RadioNotificationEvent(preamble, voice, noise, signature, phonetics, pause, lifetime, position);
+		RadioNotificationEvent e = new RadioNotificationEvent(preamble, voice, noise, signature, phonetics, pause, delay, lifetime, position);
 		e.state = state;
 		return e;
 	}
 
 	bool SerializeRPC(Serializer ctx) {
 		// Pack the 8-bit headers into 32-bit integer
-		if (!ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF)) {
+		if (!ctx.Write((preamble & 0xFF) << 24 | (voice & 0xFF) << 16 | (noise & 0xFF) << 8 | signature & 0xFF))
 			return false;
-		}
-		if (!ctx.Write(position)) {
+
+		if (!ctx.Write(position))
 			return false;
-		}
 
 		// Pad with empty phonetics until we have a multiple of 4
 		// Since DayZ only allows sending 32 bit numbers we can align the phonetics to 32 bit
-		while (phonetics.Count() % 4) {
+		while (phonetics.Count() % 4)
 			phonetics.Insert(255);
-		}
 
 		// Pack the pause and packed phonetics length as 16 bit into 32-bit integer
 		int len = phonetics.Count() / 4;
-		if (!ctx.Write((pause & 0xFFFF) << 16 | len & 0xFFFF)) {
+		if (!ctx.Write((pause & 0xFFFF) << 16 | len & 0xFFFF))
 			return false;
-		}
 
 		// Pack the 8-bit phonetics into 32-bit integers
-		for (int i = 0; i < phonetics.Count(); i += 4) {
-			if (!ctx.Write((phonetics[i] & 0xFF) << 24 | (phonetics[i + 1] & 0xFF) << 16 | (phonetics[i + 2] & 0xFF) << 8 | phonetics[i + 3] & 0xFF)) {
+		for (int i = 0; i < phonetics.Count(); i += 4)
+			if (!ctx.Write((phonetics[i] & 0xFF) << 24 | (phonetics[i + 1] & 0xFF) << 16 | (phonetics[i + 2] & 0xFF) << 8 | phonetics[i + 3] & 0xFF))
 				return false;
-			}
-		}
 
 		return true;
 	}
@@ -81,28 +82,26 @@ class RadioNotificationEvent {
 		int p, len;
 
 		// Unpack header 8-bit headers from 32-bit integer
-		if (!ctx.Read(p)) {
+		if (!ctx.Read(p))
 			return false;
-		}
 		preamble = (p >> 24) & 0xFF;
 		voice = (p >> 16) & 0xFF;
 		noise = (p >> 8) & 0xFF;
 		signature = p & 0xFF;
 
-		if (!ctx.Read(position)) {
+		if (!ctx.Read(position))
 			return false;
-		}
-		if (!ctx.Read(p)) {
+
+		if (!ctx.Read(p))
 			return false;
-		}
 		pause = (p >> 16) & 0xFFFF;
 		len = p & 0xFFFF;
 
 		phonetics = new array<int>;
 		while (len--) {
-			if (!ctx.Read(p)) {
+			if (!ctx.Read(p))
 				return false;
-			}
+
 			int a, b, c, d;
 			a = (p >> 24) & 0xFF;
 			b = (p >> 16) & 0xFF;
@@ -123,12 +122,13 @@ class RadioNotificationEvent {
 
 class RadioNotificationAlarmEvent {
 	int alarm;
-
+	int radius;
 	[NonSerialized()] vector position = "0 0 0";
 	[NonSerialized()] int state = 0;
 
-	void RadioNotificationAlarmEvent(int _alarm = 255, vector _position = "0 0 0") {
+	void RadioNotificationAlarmEvent(int _alarm = 255, int _radius = 100, vector _position = "0 0 0") {
 		alarm = _alarm;
+		radius = _radius;
 		position = _position;
 	}
 
@@ -136,22 +136,24 @@ class RadioNotificationAlarmEvent {
 	}
 
 	RadioNotificationAlarmEvent Clone() {
-		RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent(alarm, position);
+		RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent(alarm, radius, position);
 		e.state = state;
 		return e;
 	}
 
 	bool SerializeRPC(Serializer ctx) {
-		if (!ctx.Write(alarm)) {
+		if (!ctx.Write((alarm & 0xFFFF) << 16 | radius & 0xFFFF))
 			return false;
-		}
+
 		return ctx.Write(position);
 	}
 
 	bool DeserializeRPC(Serializer ctx) {
-		if (!ctx.Read(alarm)) {
+		int p;
+		if (!ctx.Read(p))
 			return false;
-		}
+		alarm = (p >> 16) & 0xFFFF;
+		radius = p & 0xFFFF;
 		return ctx.Read(position);
 	}
 }

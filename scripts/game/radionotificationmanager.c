@@ -15,6 +15,7 @@ class RadioNotificationManager {
 	protected ref map<int, RadioNotificationEvent> m_ActiveEvents = new map<int, RadioNotificationEvent>();
 	protected int m_EventPointer;
 	protected ref Timer m_NotificationPump;
+	protected ref array<int> m_EventIDs = {};
 
 	void RadioNotificationManager() {
 		m_Settings = new RadioNotificationSettings();
@@ -25,25 +26,37 @@ class RadioNotificationManager {
 		m_Settings.Save();
 	}
 
-	// [TODO] Refactor with an array of event IDs so we are not using GetElement
-	void RunNotificationPump() {
-		if (m_ActiveEvents.Count() == 0)
-			return;
-
-		if (m_EventPointer > m_ActiveEvents.Count() - 1)
-			m_EventPointer = 0;
-
-		auto e = m_ActiveEvents.GetElement(m_EventPointer);
-		if (e)
-			SendRadioNotificationEvent(e);
-
-		m_EventPointer++;
-	}
-
 	// StartNotificationPump has to performed after server is live.
 	void StartNotificationPump() {
 		m_NotificationPump = new Timer(CALL_CATEGORY_SYSTEM);
-		m_NotificationPump.Run(30.0, this, "RunNotificationPump", null, true);
+		m_NotificationPump.Run(15.0, this, "RunNotificationPump", null, true);
+	}
+
+	// Run events
+	void RunNotificationPump() {
+		if (m_EventIDs.Count() == 0)
+			return;
+
+		if (m_EventPointer > m_EventIDs.Count() - 1)
+			m_EventPointer = 0;
+
+		auto e = m_ActiveEvents.Get(m_EventIDs[m_EventPointer]);
+		if (e)
+			if ((GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
+				SendRadioNotificationEvent(e);
+				e.lastTime = e.GetGame().GetTime();
+
+				// Delete the event if it has a lifetime
+				if (e.lifetime) {
+					e.ticks++;
+					if (e.ticks > e.lifetime) {
+						Remove(m_EventIDs[m_EventPointer]);
+						return;
+					}
+				}
+			}
+
+		m_EventPointer++;
 	}
 
 	void SendConfiguration(notnull Man player) {
@@ -83,12 +96,16 @@ class RadioNotificationManager {
 			return 0;
 
 		m_ActiveEvents.Insert(m_TransmissionID, e);
+		m_EventIDs.Insert(m_TransmissionID);
 		e.position = _position;
 
 		return ++m_TransmissionID;
 	}
 
-	void Remove(int id) { m_ActiveEvents.Remove(id); }
+	void Remove(int id) {
+		m_EventIDs.RemoveItem(id);
+		m_ActiveEvents.Remove(id);
+	}
 }
 
 protected ref RadioNotificationManager g_RadioNotificationManager;

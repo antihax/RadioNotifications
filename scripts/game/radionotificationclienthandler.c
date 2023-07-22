@@ -74,13 +74,13 @@ class RadioNotificationClientHandler {
 		return true;
 	}
 
-	// Server sent a notification
+	// Server sent alarm
 	bool RadioNotificationAlarmEventRPC(ParamsReadContext ctx) {
 		RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
 		if (!e.DeserializeRPC(ctx))
 			return false;
 		for (int i = 0; i < m_PAS.Count(); i++) {
-			if (vector.Distance(m_PAS[i], e.position) < 250) {
+			if (vector.Distance(m_PAS[i], e.position) < e.radius) {
 				Print("Playing alarm at " + e.position.ToString());
 				EffectSound alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), m_PAS[i]);
 				alarm.SetAutodestroy(true);
@@ -122,7 +122,7 @@ class RadioNotificationClientHandler {
 
 				break;
 			default:
-				p.Insert(e.phonetics[i])
+				p.Insert(e.phonetics[i]);
 			}
 		}
 		delete e.phonetics;

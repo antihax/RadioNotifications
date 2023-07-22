@@ -22,6 +22,9 @@ class RadioNotificationSettings {
 	float minVolume;
 	float maxVolume;
 
+	// Radio Channel Broadcast
+	int radioChannel;
+
 	// Map of events to their typeNames.
 	ref map<string, RadioNotificationEvent> eventMap;
 
@@ -74,8 +77,8 @@ class RadioNotificationSettings {
 		ignoreDistance = 1000;
 		minVolume = 0.1;
 		maxVolume = 1.0;
-		eventMap.Insert("Wreck_Mi8_Crashed", new RadioNotificationEvent(1, 0, 3, 1, {36, 37, 45, 22, 18, 8, 41, 128, 41, 128, 42}, 1, 1200));
-		eventMap.Insert("Wreck_UH1Y", new RadioNotificationEvent(1, 1, 2, 1, {36, 37, 45, 30, 17, 1, 34, 41, 128, 41, 128, 42}, 1, 1200));
+		eventMap.Insert("Wreck_Mi8_Crashed", new RadioNotificationEvent(1, 0, 3, 1, {36, 37, 45, 22, 18, 8, 41, 128, 41, 128, 42}, 1, 60, 5));
+		eventMap.Insert("Wreck_UH1Y", new RadioNotificationEvent(1, 1, 2, 1, {36, 37, 45, 30, 17, 1, 34, 41, 128, 41, 128, 42}, 1, 60, 5));
 		alarmMap.Insert("ContaminatedArea_Dynamic", new RadioNotificationAlarmEvent(0));
 	}
 
