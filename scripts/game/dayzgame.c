@@ -13,7 +13,6 @@ const int RPC_ANTIHAX_RADIONOTIFICATIONS = -1456746572;
 
 modded class DayZGame {
 	void DayZGame() {
-
 #ifdef SERVER
 		g_RadioNotificationManager = new RadioNotificationManager();
 #else
