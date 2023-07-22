@@ -31,14 +31,13 @@ class CfgMods {
 
 class CfgSoundCurves {
 	class alarmAttenuationCurve {
-		points[] =
-			{
-				{0, 0.8},
-				{25, 0.3},
-				{150, 0.2},
-				{500, 0.1},
-				{750, 0.05},
-				{1000, 0}};
+		points[] = {
+			{0, 0.8},
+			{25, 0.3},
+			{150, 0.2},
+			{500, 0.1},
+			{750, 0.05},
+			{1000, 0}};
 	};
 };
 
@@ -51,7 +50,7 @@ class CfgSoundShaders {
 	};
 
 	class RadioNotification_Alarm_SoundShader : RadioNotification_SoundShader {
-		volume = 1;
+		volume = 0.8;
 		range = 2000;
 	};
 
@@ -2044,7 +2043,8 @@ class CfgSoundSets {
 	};
 
 	class RadioNotification_Alarm_SoundSet : RadioNotification_SoundSet {
-		frequencyRandomizer = 2;
+
+		speedOfSound = 1;
 		volumeCurve = "alarmAttenuationCurve";
 		distanceFilter = "defaultDistanceFreqAttenuationFilter";
 		sound3DProcessingType = "ThunderNear3DProcessingType";
