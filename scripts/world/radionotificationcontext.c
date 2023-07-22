@@ -183,7 +183,8 @@ class RadioNotificationTransmitterContext {
 		m_NoiseVolume = Math.Clamp(distance / MAX_DISTANCE, MIN_VOLUME, MAX_VOLUME);
 
 		// If the radio is off, or we are too far, silence.
-		// If we are not on the right channel, silence (Mask Frequency index, there are flags on it?).
+		// If we are not on the right channel, silence.
+		// [TODO] Remove the modulo if they fix GetTunedFrequencyIndex > 7 bug.
 		if (!m_Transmitter.IsOn() || distance > MAX_DISTANCE || m_Transmitter.GetTunedFrequencyIndex() % 8 != GetRadioNotificationClientHandler().m_Settings.radioChannel) {
 			m_VoiceVolume = 0.0;
 			m_NoiseVolume = 0.0;
