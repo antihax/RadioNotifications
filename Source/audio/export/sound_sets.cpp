@@ -19,6 +19,36 @@
             soundShaders[] = {"RadioNotification_Preamble2_SoundShader"};
         };
 
+        class RadioNotification_Preamble3: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Preamble3_SoundShader"};
+        };
+
+        class RadioNotification_Preamble4: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Preamble4_SoundShader"};
+        };
+
+        class RadioNotification_Preamble5: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Preamble5_SoundShader"};
+        };
+
+        class RadioNotification_Preamble6: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Preamble6_SoundShader"};
+        };
+
+        class RadioNotification_Preamble7: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Preamble7_SoundShader"};
+        };
+
+        class RadioNotification_Preamble8: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Preamble8_SoundShader"};
+        };
+
         class RadioNotification_Noise0: RadioNotification_SoundSet
         {
             soundShaders[] = {"RadioNotification_Noise0_SoundShader"};
@@ -40,6 +70,30 @@
         class RadioNotification_Noise3: RadioNotification_SoundSet
         {
             soundShaders[] = {"RadioNotification_Noise3_SoundShader"};
+            loop = 1;
+        };
+
+        class RadioNotification_Noise4: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Noise4_SoundShader"};
+            loop = 1;
+        };
+
+        class RadioNotification_Noise5: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Noise5_SoundShader"};
+            loop = 1;
+        };
+
+        class RadioNotification_Noise6: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Noise6_SoundShader"};
+            loop = 1;
+        };
+
+        class RadioNotification_Noise7: RadioNotification_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Noise7_SoundShader"};
             loop = 1;
         };
 
@@ -2471,4 +2525,274 @@
             class RadioNotification_Voice8_Phonetic53: RadioNotification_SoundSet
             {
                 soundShaders[] = {"RadioNotification_Voice8_Phonetic53_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic0: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic0_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic1: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic1_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic2: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic2_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic3: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic3_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic4: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic4_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic5: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic5_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic6: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic6_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic7: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic7_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic8: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic8_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic9: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic9_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic10: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic10_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic11: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic11_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic12: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic12_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic13: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic13_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic14: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic14_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic15: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic15_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic16: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic16_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic17: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic17_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic18: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic18_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic19: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic19_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic20: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic20_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic21: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic21_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic22: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic22_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic23: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic23_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic24: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic24_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic25: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic25_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic26: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic26_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic27: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic27_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic28: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic28_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic29: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic29_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic30: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic30_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic31: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic31_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic32: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic32_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic33: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic33_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic34: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic34_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic35: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic35_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic36: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic36_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic37: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic37_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic38: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic38_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic39: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic39_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic40: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic40_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic41: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic41_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic42: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic42_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic43: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic43_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic44: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic44_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic45: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic45_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic46: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic46_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic47: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic47_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic48: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic48_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic49: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic49_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic50: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic50_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic51: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic51_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic52: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic52_SoundShader"};
+            };
+
+            class RadioNotification_Voice9_Phonetic53: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Voice9_Phonetic53_SoundShader"};
             };

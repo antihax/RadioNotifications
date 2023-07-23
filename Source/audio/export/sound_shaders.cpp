@@ -2,6 +2,8 @@
         class RadioNotification_Alarm0_SoundShader: RadioNotification_Alarm_SoundShader
         {
             samples[] = {{"RadioNotifications\sounds\alarms\0",1}};
+            volume = 0.8;
+		    range = 2000;
         };
 
         class RadioNotification_Preamble0_SoundShader: RadioNotification_SoundShader
@@ -17,6 +19,36 @@
         class RadioNotification_Preamble2_SoundShader: RadioNotification_SoundShader
         {
             samples[] = {{"RadioNotifications\sounds\preambles\2",1}};
+        };
+
+        class RadioNotification_Preamble3_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\preambles\3",1}};
+        };
+
+        class RadioNotification_Preamble4_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\preambles\4",1}};
+        };
+
+        class RadioNotification_Preamble5_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\preambles\5",1}};
+        };
+
+        class RadioNotification_Preamble6_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\preambles\6",1}};
+        };
+
+        class RadioNotification_Preamble7_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\preambles\7",1}};
+        };
+
+        class RadioNotification_Preamble8_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\preambles\8",1}};
         };
 
         class RadioNotification_Noise0_SoundShader: RadioNotification_SoundShader
@@ -37,6 +69,26 @@
         class RadioNotification_Noise3_SoundShader: RadioNotification_SoundShader
         {
             samples[] = {{"RadioNotifications\sounds\noise\3",1}};
+        };
+
+        class RadioNotification_Noise4_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\noise\4",1}};
+        };
+
+        class RadioNotification_Noise5_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\noise\5",1}};
+        };
+
+        class RadioNotification_Noise6_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\noise\6",1}};
+        };
+
+        class RadioNotification_Noise7_SoundShader: RadioNotification_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\noise\7",1}};
         };
 
             class RadioNotification_Voice0_Phonetic0_SoundShader: RadioNotification_SoundShader
@@ -2467,4 +2519,274 @@
             class RadioNotification_Voice8_Phonetic53_SoundShader: RadioNotification_SoundShader
             {
                 samples[] = {{"RadioNotifications\sounds\phonetics\8_53",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic0_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_0",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic1_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_1",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic2_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_2",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic3_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_3",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic4_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_4",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic5_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_5",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic6_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_6",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic7_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_7",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic8_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_8",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic9_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_9",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic10_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_10",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic11_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_11",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic12_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_12",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic13_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_13",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic14_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_14",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic15_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_15",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic16_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_16",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic17_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_17",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic18_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_18",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic19_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_19",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic20_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_20",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic21_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_21",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic22_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_22",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic23_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_23",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic24_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_24",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic25_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_25",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic26_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_26",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic27_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_27",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic28_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_28",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic29_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_29",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic30_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_30",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic31_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_31",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic32_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_32",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic33_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_33",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic34_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_34",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic35_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_35",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic36_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_36",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic37_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_37",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic38_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_38",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic39_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_39",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic40_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_40",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic41_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_41",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic42_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_42",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic43_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_43",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic44_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_44",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic45_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_45",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic46_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_46",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic47_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_47",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic48_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_48",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic49_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_49",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic50_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_50",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic51_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_51",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic52_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_52",1}};
+            };
+
+            class RadioNotification_Voice9_Phonetic53_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\phonetics\9_53",1}};
             };
