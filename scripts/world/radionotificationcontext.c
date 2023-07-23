@@ -61,6 +61,14 @@ class RadioNotificationTransmitterContext {
 	// Return is our exit from the loop.
 	void NextSegment() {
 		string a;
+
+		// Something broke.
+		if (!m_CurrentRadioNotificationEvent) {
+			NoiseStop();
+			m_PlayingVoice = false;
+			return;
+		}
+
 		switch (m_CurrentRadioNotificationEvent.state) {
 		case 0: // Preamble
 			m_CurrentRadioNotificationEvent.state = 1;
@@ -88,6 +96,7 @@ class RadioNotificationTransmitterContext {
 			NoiseStop();
 			delete m_CurrentRadioNotificationEvent;
 			m_CurrentRadioNotificationEvent = null;
+			m_PlayingVoice = false;
 			return; // exit the loop
 		}
 
@@ -129,6 +138,10 @@ class RadioNotificationTransmitterContext {
 		// Why is this not atomic?
 		m_CurrentRadioNotificationEvent = m_RadioNotificationQueue.Get(0);
 		m_RadioNotificationQueue.Remove(0);
+
+		// Check it wasn't deleted while we dequeued.
+		if (!m_CurrentRadioNotificationEvent)
+			return;
 
 		// Start noise
 		m_PlayingNoise = true;
