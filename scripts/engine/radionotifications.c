@@ -21,14 +21,15 @@ class RadioNotificationEvent {
 
 	// Non-replicated
 	int delay;
-	int lifetime;
+	int repeat;
 
 	[NonSerialized()] vector position = "0 0 0";
+	[NonSerialized()] int heading = 0;
 	[NonSerialized()] int state = 0;
 	[NonSerialized()] int ticks = 0;
 	[NonSerialized()] int lastTime = 0;
 
-	void RadioNotificationEvent(int _preamble = 255, int _voice = 0, int _noise = 0, int _signature = 255, array<int> _phonetics = null, int _pause = 0, int _delay = 60, int _lifetime = 3, vector _position = "0 0 0") {
+	void RadioNotificationEvent(int _preamble = 255, int _voice = 0, int _noise = 0, int _signature = 255, array<int> _phonetics = null, int _pause = 0, int _delay = 60, int _repeat = 3, vector _position = "0 0 0", int _heading = 0) {
 		preamble = _preamble;
 		voice = _voice;
 		noise = _noise;
@@ -37,9 +38,10 @@ class RadioNotificationEvent {
 			phonetics.InsertAll(_phonetics);
 		}
 		pause = _pause;
-		lifetime = _lifetime;
+		repeat = _repeat;
 		delay = _delay;
 		position = _position;
+		heading = _heading;
 	}
 
 	void ~RadioNotificationEvent() {
@@ -47,7 +49,7 @@ class RadioNotificationEvent {
 	}
 
 	RadioNotificationEvent Clone() {
-		RadioNotificationEvent e = new RadioNotificationEvent(preamble, voice, noise, signature, phonetics, pause, delay, lifetime, position);
+		RadioNotificationEvent e = new RadioNotificationEvent(preamble, voice, noise, signature, phonetics, pause, delay, repeat, position, heading);
 		e.state = state;
 		return e;
 	}
@@ -65,9 +67,11 @@ class RadioNotificationEvent {
 		while (phonetics.Count() % 4)
 			phonetics.Insert(255);
 
-		// Pack the pause and packed phonetics length as 16 bit into 32-bit integer
+		// Pack the pause and packed phonetics length as 8 bit into and heading as 16 bit
+		// [TODO] We could have some benifit here packing into tighter bits, but it would be more complex
+		// [TODO] Replace with a library that can pack bits into a 32 bit array. Heading is only 10 bits, len is only 7, pause 4.
 		int len = phonetics.Count() / 4;
-		if (!ctx.Write((pause & 0xFFFF) << 16 | len & 0xFFFF))
+		if (!ctx.Write((pause & 0xFFFF) << 24 | (len & 0xFF) << 16 | heading & 0xFFFF)
 			return false;
 
 		// Pack the 8-bit phonetics into 32-bit integers
@@ -94,8 +98,9 @@ class RadioNotificationEvent {
 
 		if (!ctx.Read(p))
 			return false;
-		pause = (p >> 16) & 0xFFFF;
-		len = p & 0xFFFF;
+		pause = (p >> 24) & 0xFF; // first 8 bits
+		len = (p >> 16) & 0xFF;	  // second 8 bits
+		heading = p & 0xFFFF;	  // last 16 bits
 
 		phonetics = new array<int>;
 		while (len--) {
@@ -107,6 +112,7 @@ class RadioNotificationEvent {
 			b = (p >> 16) & 0xFF;
 			c = (p >> 8) & 0xFF;
 			d = p & 0xFF;
+			// Filter here, it's easier.
 			if (a != 255)
 				phonetics.Insert(a);
 			if (b != 255)

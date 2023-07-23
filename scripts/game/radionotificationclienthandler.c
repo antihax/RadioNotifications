@@ -81,7 +81,6 @@ class RadioNotificationClientHandler {
 			return false;
 		for (int i = 0; i < m_PAS.Count(); i++) {
 			if (vector.Distance(m_PAS[i], e.position) < e.radius) {
-				Print("Playing alarm at " + e.position.ToString());
 				EffectSound alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), m_PAS[i]);
 				alarm.SetAutodestroy(true);
 				break;
@@ -101,7 +100,6 @@ class RadioNotificationClientHandler {
 		int gridX, gridZ;
 		float GRID_SIZE = GetGame().ConfigGetFloat(string.Format(GRID_SIZE_CFG_PATH, GetGame().GetWorldName()));
 		GetGame().GetWorld().GetGridCoords(e.position, GRID_SIZE, gridX, gridZ);
-
 		array<int> p = {};
 		for (int i = 0; i < e.phonetics.Count(); i++) {
 			switch (e.phonetics[i]) {
@@ -150,8 +148,24 @@ class RadioNotificationClientHandler {
 				p.Insert(gridZ / 10 % 10);
 				break;
 
-			case 255: // Empty
+			case 132: // Heading
+				// Replace with heading in degrees
+				p.Insert(e.heading / 100 % 10);
+				p.Insert(e.heading / 10 % 10);
+				p.Insert(e.heading % 10);
+				break;
 
+			case 133: // Random Number
+				// Replace with heading in degrees
+				p.Insert(Math.RandomIntInclusive(0, 9));
+				break;
+
+			case 134: // Random Phonetic Letter
+				// Replace with heading in degrees
+				p.Insert(Math.RandomIntInclusive(10, 35));
+				break;
+
+			case 255: // Empty
 				break;
 			default:
 				p.Insert(e.phonetics[i]);

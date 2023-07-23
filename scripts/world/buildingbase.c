@@ -10,14 +10,34 @@
 
 #ifdef SERVER
 modded class BuildingBase {
-	private int m_RadioNotificationID;
+	protected int m_RadioNotificationID;
+	protected ref Timer m_RadioNotificationUpdateTimer;
+
 	override void EEInit() {
 		super.EEInit();
 		// Shut up the script errors... Some statics are crawling through here very early.
-		if (GetRadioNotificationManager())
+		if (GetRadioNotificationManager()) {
 			m_RadioNotificationID = GetRadioNotificationManager().GetNewTransmissionID(GetType(), GetPosition());
-		else
+			//	Print("BuildingBase::EEInit " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
+			if (m_RadioNotificationID > 0) {
+				m_RadioNotificationUpdateTimer = new Timer(CALL_CATEGORY_SYSTEM);
+				m_RadioNotificationUpdateTimer.Run(0.25, this, "EOnRadioNotificationUpdate", null, true);
+			}
+		} else {
 			Print("BuildingBase::EEInit Warning! Manager Unavailable " + GetType() + " " + GetPosition());
+		}
+		Print("BuildingBase::EEInit " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
+	}
+
+	void EOnRadioNotificationUpdate() {
+		// Print("BuildingBase::EOnRadioNotificationUpdate " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
+		GetRadioNotificationManager().UpdatePosition(m_RadioNotificationID, GetPosition(), GetDirection());
+	}
+
+	override void EEKilled(Object killer) {
+		if (m_RadioNotificationID > 0)
+			GetRadioNotificationManager().Remove(m_RadioNotificationID);
+		super.EEKilled(killer);
 	}
 
 	override void EEDelete(EntityAI parent) {

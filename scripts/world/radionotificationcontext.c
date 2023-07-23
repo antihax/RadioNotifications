@@ -14,26 +14,27 @@ class RadioNotificationTransmitterContext {
 	protected ref Timer m_VoiceDequeue;
 	protected ref array<RadioNotificationEvent> m_RadioNotificationQueue = {};
 	protected ref RadioNotificationEvent m_CurrentRadioNotificationEvent;
+	protected ref Timer m_ActiveVoiceCancelTimer;
 
 	// Active Voices for the current notification
-	ref EffectSound m_ActiveVoiceSound;
-	ref EffectSound m_ActiveNoiseSound;
-	float m_VoiceVolume = 0;
-	float m_NoiseVolume = 0;
+	protected ref EffectSound m_ActiveVoiceSound;
+	protected ref EffectSound m_ActiveNoiseSound;
+	protected float m_VoiceVolume = 0;
+	protected float m_NoiseVolume = 0;
 	protected bool m_PlayingNoise = false;
 	protected bool m_PlayingVoice = false;
 
 	// Distance to ignore notifications. Should be a significant distance a
 	// player could not move in the time it takes to play a notification.
-	static const float IGNORE_THREASHOLD = 10000; // meters
+	protected static const float IGNORE_THREASHOLD = 10000; // meters
 
 	// Parent
 	protected TransmitterBase m_Transmitter;
 
 	void RadioNotificationTransmitterContext(TransmitterBase _transmitter) {
 		m_Transmitter = _transmitter;
-		// m_VoicePump = new Timer(CALL_CATEGORY_SYSTEM);
-		// m_VoicePump.Run(15.0, this, "RunRandomVoice", null, true);
+		m_ActiveVoiceCancelTimer = new Timer(CALL_CATEGORY_GAMEPLAY);
+
 		m_VoiceDequeue = new Timer(CALL_CATEGORY_SYSTEM);
 		m_VoiceDequeue.Run(1.0, this, "RunVoiceDequeue", null, true);
 		GetRadioNotificationClientHandler().Event_RadioNotification.Insert(On_RadioNotification);
@@ -43,7 +44,7 @@ class RadioNotificationTransmitterContext {
 		// We can race deleting these this stack.
 		if (GetRadioNotificationClientHandler())
 			GetRadioNotificationClientHandler().Event_RadioNotification.Remove(On_RadioNotification);
-
+		m_ActiveVoiceCancelTimer.Stop();
 		m_VoiceDequeue.Stop();
 		if (m_ActiveVoiceSound)
 			m_ActiveVoiceSound.SoundStop();
@@ -64,23 +65,28 @@ class RadioNotificationTransmitterContext {
 
 		// Something broke.
 		if (!m_CurrentRadioNotificationEvent) {
+			Print("RadioNotification::NextSegment m_CurrentRadioNotificationEvent is null");
 			NoiseStop();
-			m_PlayingVoice = false;
 			return;
 		}
 
 		switch (m_CurrentRadioNotificationEvent.state) {
 		case 0: // Preamble
 			m_CurrentRadioNotificationEvent.state = 1;
-			if (m_CurrentRadioNotificationEvent.preamble >= 0)
+			if (m_CurrentRadioNotificationEvent.preamble != 255)
 				a = "RadioNotification_Preamble" + m_CurrentRadioNotificationEvent.preamble.ToString();
 			break;
 
 		case 1: // Phonetics
 			if (m_CurrentRadioNotificationEvent.phonetics.Count() > 0) {
-
 				auto p = m_CurrentRadioNotificationEvent.phonetics.Get(0);
 				m_CurrentRadioNotificationEvent.phonetics.RemoveOrdered(0);
+				if (p < 0) {
+					Print("RadioNotification::NextSegment Invalid phonetic " + p.ToString()
+					m_CurrentRadioNotificationEvent.state = 3;
+					break;
+				}
+
 				a = "RadioNotification_Voice" + m_CurrentRadioNotificationEvent.voice.ToString() + "_Phonetic" + p.ToString();
 			} else
 				m_CurrentRadioNotificationEvent.state = 2;
@@ -88,7 +94,7 @@ class RadioNotificationTransmitterContext {
 
 		case 2: // Signature
 			m_CurrentRadioNotificationEvent.state = 3;
-			if (m_CurrentRadioNotificationEvent.signature >= 0)
+			if (m_CurrentRadioNotificationEvent.signature != 255)
 				a = "RadioNotification_Preamble" + m_CurrentRadioNotificationEvent.signature.ToString();
 			break;
 
@@ -96,7 +102,6 @@ class RadioNotificationTransmitterContext {
 			NoiseStop();
 			delete m_CurrentRadioNotificationEvent;
 			m_CurrentRadioNotificationEvent = null;
-			m_PlayingVoice = false;
 			return; // exit the loop
 		}
 
@@ -115,16 +120,23 @@ class RadioNotificationTransmitterContext {
 	}
 
 	void Event_OnSoundWaveEnded() {
+		m_ActiveVoiceCancelTimer.Stop();
 		if (m_PlayingVoice) {
 			m_PlayingVoice = false;
 			NextSegment();
 		}
+
 		UpdateVolumes();
 	}
 
 	void NoiseStop() {
-		m_ActiveNoiseSound.SoundStop();
+		if (m_ActiveNoiseSound)
+			m_ActiveNoiseSound.SoundStop();
+		if (m_ActiveVoiceSound)
+			m_ActiveVoiceSound.SoundStop();
+		m_ActiveVoiceCancelTimer.Stop();
 		m_PlayingNoise = false;
+		m_PlayingVoice = false;
 		UpdateVolumes();
 	}
 
@@ -140,11 +152,18 @@ class RadioNotificationTransmitterContext {
 		m_RadioNotificationQueue.Remove(0);
 
 		// Check it wasn't deleted while we dequeued.
-		if (!m_CurrentRadioNotificationEvent)
+		if (!m_CurrentRadioNotificationEvent) {
+			Print("RadioNotification::RunVoiceDequeue m_CurrentRadioNotificationEvent is null");
+			NoiseStop();
 			return;
+		}
 
 		// Start noise
 		m_PlayingNoise = true;
+		// [TODO] figure out how many noise samples there are
+		if (GetRadioNotificationClientHandler().m_Settings.randomNoise)
+			m_CurrentRadioNotificationEvent.noise = Math.RandomInt(0, 8);
+
 		string n = "RadioNotification_Noise" + m_CurrentRadioNotificationEvent.noise.ToString();
 		m_ActiveNoiseSound = PlaySoundSet(n, true);
 
@@ -163,6 +182,9 @@ class RadioNotificationTransmitterContext {
 		s.SetSoundLoop(loop);
 		// This is a hack to fix a bug preventing setting volumes on sounds.
 		if (notify) {
+			// Set a timeout to kill the sound if it doesn't start.
+			m_ActiveVoiceCancelTimer.Run(s.GetLength() + 1.25, this, "TimeoutAudio", null, false);
+
 			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStarted);
 			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStartedVolumes);
 			s.Event_OnSoundWaveEnded.Insert(Event_OnSoundWaveEnded);
@@ -173,6 +195,11 @@ class RadioNotificationTransmitterContext {
 		}
 
 		return s;
+	}
+
+	void TimeoutAudio() {
+		Print("RadioNotification::TimeoutAudio");
+		NextSegment();
 	}
 
 	// Update the volumes of the active sounds based on distance.

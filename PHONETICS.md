@@ -61,5 +61,7 @@
 | 129    | GridRef 4n w/ cardinals |
 | 130    | GridRef 6n no cardinals |
 | 131    | GridRef 4n no cardinals |
-
-| 255 | Ignore |
+| 132    | Direction (degrees)     |
+| 133    | Random Number           |
+| 134    | Random Phonetic Letter  |
+| 255    | Ignore                  |

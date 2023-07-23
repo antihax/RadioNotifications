@@ -43,15 +43,17 @@ class RadioNotificationManager {
 		auto e = m_ActiveEvents.Get(m_EventIDs[m_EventPointer]);
 		if (e)
 			if ((GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
-				SendRadioNotificationEvent(e);
-				e.lastTime = e.GetGame().GetTime();
+				if (e.position[0] > 0.0 || e.position[2] > 0.0) {
+					SendRadioNotificationEvent(e);
+					e.lastTime = e.GetGame().GetTime();
 
-				// Delete the event if it has a lifetime
-				if (e.lifetime) {
-					e.ticks++;
-					if (e.ticks > e.lifetime) {
-						Remove(m_EventIDs[m_EventPointer]);
-						return;
+					// Delete the event if it has repeats expires
+					if (e.repeat) {
+						e.ticks++;
+						if (e.ticks > e.repeat) {
+							Remove(m_EventIDs[m_EventPointer]);
+							return;
+						}
 					}
 				}
 			}
@@ -84,10 +86,11 @@ class RadioNotificationManager {
 
 	// Get a unique ID for a transmission
 	// Returns zero if the transmission is ignored.
-	int GetNewTransmissionID(string type, vector _position) {
+	int GetNewTransmissionID(string type, vector position) {
+		m_TransmissionID++;
 		auto a = m_Settings.GetAlarm(type);
 		if (a) {
-			a.position = _position;
+			a.position = position;
 			SendRadioNotificationAlarmEvent(a);
 		}
 
@@ -97,9 +100,24 @@ class RadioNotificationManager {
 
 		m_ActiveEvents.Insert(m_TransmissionID, e);
 		m_EventIDs.Insert(m_TransmissionID);
-		e.position = _position;
+		e.position = position;
 
-		return ++m_TransmissionID;
+		return m_TransmissionID;
+	}
+
+	void UpdatePosition(int id, vector position, vector direction) {
+		//("Updating position " + id + " to " + position);
+		auto e = m_ActiveEvents.Get(id);
+		if (e) {
+			e.position = position;
+
+			// Calculate heading
+			position[1] = 0;
+			direction[1] = 0;
+			position.Normalize();
+			direction.Normalize();
+			e.heading = Math.Acos(vector.Dot(position, direction)) * Math.RAD2DEG;
+		}
 	}
 
 	void Remove(int id) {

@@ -25,6 +25,9 @@ class RadioNotificationSettings {
 	// Radio Channel Broadcast
 	int radioChannel;
 
+	// Randomize noise to minimize predicting the message type
+	bool randomNoise;
+
 	// Map of events to their typeNames.
 	ref map<string, RadioNotificationEvent> eventMap;
 
@@ -46,11 +49,16 @@ class RadioNotificationSettings {
 
 	bool SerializeRPC(Serializer ctx) {
 		ctx.Write(maxDistance);
+		ctx.Write(randomNoise);
+		ctx.Write(radioChannel);
 		ctx.Write(baseRadioMultiplier);
 		return true;
 	}
+
 	bool DeserializeRPC(Serializer ctx) {
 		ctx.Read(maxDistance);
+		ctx.Read(randomNoise);
+		ctx.Read(radioChannel);
 		ctx.Read(baseRadioMultiplier);
 		return true;
 	}
