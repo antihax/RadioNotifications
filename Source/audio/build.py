@@ -11,7 +11,7 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import os
 
-num_voices = 9
+num_voices = 10
 num_samples = 54
 
 # Normalize a chunk to a target amplitude.
@@ -84,6 +84,8 @@ for file in os.listdir("./alarms"):
         class RadioNotification_Alarm%d_SoundShader: RadioNotification_Alarm_SoundShader
         {
             samples[] = {{"RadioNotifications\\sounds\\alarms\\%d",1}};
+            volume = 0.8;
+		    range = 2000;
         };""" % (c, c))
     
     sound_sets.append("""
