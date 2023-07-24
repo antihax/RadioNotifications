@@ -31,18 +31,18 @@ modded class BuildingBase {
 
 	void EOnRadioNotificationUpdate() {
 		// Print("BuildingBase::EOnRadioNotificationUpdate " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
-		GetRadioNotificationManager().UpdatePosition(m_RadioNotificationID, GetPosition(), GetDirection());
+		GetRadioNotificationManager().UpdateEventPosition(m_RadioNotificationID, GetPosition(), GetDirection());
 	}
 
 	override void EEKilled(Object killer) {
 		if (m_RadioNotificationID > 0)
-			GetRadioNotificationManager().Remove(m_RadioNotificationID);
+			GetRadioNotificationManager().RemoveEvent(m_RadioNotificationID);
 		super.EEKilled(killer);
 	}
 
 	override void EEDelete(EntityAI parent) {
 		if (m_RadioNotificationID > 0)
-			GetRadioNotificationManager().Remove(m_RadioNotificationID);
+			GetRadioNotificationManager().RemoveEvent(m_RadioNotificationID);
 		super.EEDelete(parent);
 	}
 }

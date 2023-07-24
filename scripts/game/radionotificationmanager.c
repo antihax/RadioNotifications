@@ -29,7 +29,7 @@ class RadioNotificationManager {
 	// StartNotificationPump has to performed after server is live.
 	void StartNotificationPump() {
 		m_NotificationPump = new Timer(CALL_CATEGORY_SYSTEM);
-		m_NotificationPump.Run(15.0, this, "RunNotificationPump", null, true);
+		m_NotificationPump.Run(1.0, this, "RunNotificationPump", null, true);
 	}
 
 	// Run events
@@ -51,7 +51,7 @@ class RadioNotificationManager {
 					if (e.repeat) {
 						e.ticks++;
 						if (e.ticks > e.repeat) {
-							Remove(m_EventIDs[m_EventPointer]);
+							RemoveEvent(m_EventIDs[m_EventPointer]);
 							return;
 						}
 					}
@@ -87,7 +87,6 @@ class RadioNotificationManager {
 	// Get a unique ID for a transmission
 	// Returns zero if the transmission is ignored.
 	int GetNewTransmissionID(string type, vector position) {
-		m_TransmissionID++;
 		auto a = m_Settings.GetAlarm(type);
 		if (a) {
 			a.position = position;
@@ -97,15 +96,21 @@ class RadioNotificationManager {
 		auto e = m_Settings.GetEvent(type);
 		if (!e)
 			return 0;
-
-		m_ActiveEvents.Insert(m_TransmissionID, e);
-		m_EventIDs.Insert(m_TransmissionID);
 		e.position = position;
 
+		return AddEvent(e);
+	}
+
+	// Add a new RadioNotificationEvent to the queue.
+	// Get a unique ID for a transmission
+	int AddEvent(RadioNotificationEvent e) {
+		m_TransmissionID++;
+		m_ActiveEvents.Insert(m_TransmissionID, e);
+		m_EventIDs.Insert(m_TransmissionID);
 		return m_TransmissionID;
 	}
 
-	void UpdatePosition(int id, vector position, vector direction) {
+	void UpdateEventPosition(int id, vector position, vector direction) {
 		//("Updating position " + id + " to " + position);
 		auto e = m_ActiveEvents.Get(id);
 		if (e) {
@@ -116,11 +121,15 @@ class RadioNotificationManager {
 			direction[1] = 0;
 			position.Normalize();
 			direction.Normalize();
+			vector cross = position * direction;
+
 			e.heading = Math.Acos(vector.Dot(position, direction)) * Math.RAD2DEG;
+			if (cross[1] < 0)
+				e.heading = -e.heading;
 		}
 	}
 
-	void Remove(int id) {
+	void RemoveEvent(int id) {
 		m_EventIDs.RemoveItem(id);
 		m_ActiveEvents.Remove(id);
 	}
