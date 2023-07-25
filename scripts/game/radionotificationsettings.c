@@ -31,6 +31,9 @@ class RadioNotificationSettings {
 	// Map of events to their typeNames.
 	ref map<string, RadioNotificationEvent> eventMap;
 
+	// Static events to always repeat.
+	ref array<RadioNotificationEvent> staticEvents;
+
 	// Map of alarms to their typeNames.
 	ref map<string, RadioNotificationAlarmEvent> alarmMap;
 
@@ -39,11 +42,13 @@ class RadioNotificationSettings {
 
 	void RadioNotificationSettings() {
 		eventMap = new map<string, RadioNotificationEvent>();
+		staticEvents = new array<RadioNotificationEvent>();
 		alarmMap = new map<string, RadioNotificationAlarmEvent>();
 	}
 
 	void ~RadioNotificationSettings() {
 		delete eventMap;
+		delete staticEvents;
 		delete alarmMap;
 	}
 

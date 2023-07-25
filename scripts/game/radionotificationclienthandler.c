@@ -97,6 +97,11 @@ class RadioNotificationClientHandler {
 			return false;
 
 		// [TODO] find a better place for this and optimize it
+		if (e.position[0] <= 0.0)
+			e.position[0] = 0.1;
+		if (e.position[2] <= 0.0)
+			e.position[2] = 0.1;
+
 		int gridX, gridZ;
 		float GRID_SIZE = GetGame().ConfigGetFloat(string.Format(GRID_SIZE_CFG_PATH, GetGame().GetWorldName()));
 		GetGame().GetWorld().GetGridCoords(e.position, GRID_SIZE, gridX, gridZ);

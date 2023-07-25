@@ -20,6 +20,9 @@ class RadioNotificationManager {
 	void RadioNotificationManager() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.Load();
+		for (int i = 0; i < m_Settings.staticEvents.Count(); i++) {
+			AddEvent(m_Settings.staticEvents[i]);
+		}
 	}
 
 	void ~RadioNotificationManager() {
@@ -34,30 +37,33 @@ class RadioNotificationManager {
 
 	// Run events
 	void RunNotificationPump() {
-		if (m_EventIDs.Count() == 0)
+		if (m_EventIDs.Count() == 0) {
 			return;
+		}
 
 		if (m_EventPointer > m_EventIDs.Count() - 1)
 			m_EventPointer = 0;
 
 		auto e = m_ActiveEvents.Get(m_EventIDs[m_EventPointer]);
-		if (e)
+		if (e) {
 			if ((GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
-				if (e.position[0] > 0.0 || e.position[2] > 0.0) {
-					SendRadioNotificationEvent(e);
-					e.lastTime = e.GetGame().GetTime();
 
-					// Delete the event if it has repeats expires
-					if (e.repeat) {
-						e.ticks++;
-						if (e.ticks > e.repeat) {
-							RemoveEvent(m_EventIDs[m_EventPointer]);
-							return;
-						}
+				SendRadioNotificationEvent(e);
+				e.lastTime = e.GetGame().GetTime();
+
+				// Delete the event if it has repeats expires
+				if (e.repeat > 0) {
+					e.ticks++;
+					if (e.ticks > e.repeat) {
+						RemoveEvent(m_EventIDs[m_EventPointer]);
+						return;
 					}
 				}
 			}
-
+		} else {
+			RemoveEvent(m_EventIDs[m_EventPointer]);
+			Print("Event " + m_EventIDs[m_EventPointer] + " not found, attempting to remove.");
+		}
 		m_EventPointer++;
 	}
 

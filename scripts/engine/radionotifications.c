@@ -70,7 +70,8 @@ class RadioNotificationEvent {
 		// [TODO] We could have some benifit here packing into tighter bits, but it would be more complex
 		// [TODO] Replace with a library that can pack bits into a 32 bit array. Heading is only 10 bits, len is only 7, pause 4.
 		int len = phonetics.Count() / 4;
-		if (!ctx.Write((pause & 0xFFFF) << 24 | (len & 0xFF) << 16 | heading & 0xFFFF)
+
+		if (!ctx.Write((pause & 0xFFFF) << 24 | (len & 0xFF) << 16 | heading & 0xFFFF))
 			return false;
 
 		// Pack the 8-bit phonetics into 32-bit integers
