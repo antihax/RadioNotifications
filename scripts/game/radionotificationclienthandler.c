@@ -21,13 +21,18 @@ class RadioNotificationClientHandler {
 	protected ref array<vector> m_PAS = {};
 	protected static const string GRID_SIZE_CFG_PATH = "CfgWorlds %1 Grid Zoom1 stepX";
 
-	void RegisterPAS(vector loc) {
-		m_PAS.Insert(loc);
-	}
-
 	void RadioNotificationClientHandler() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.DefaultSettings();
+	}
+
+	void ~RadioNotificationClientHandler() {
+		delete Event_RadioNotification;
+		delete m_Settings;
+	}
+
+	void RegisterPAS(vector loc) {
+		m_PAS.Insert(loc);
 	}
 
 	bool OnRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
@@ -77,8 +82,11 @@ class RadioNotificationClientHandler {
 	// Server sent alarm
 	bool RadioNotificationAlarmEventRPC(ParamsReadContext ctx) {
 		RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
-		if (!e.DeserializeRPC(ctx))
+		if (!e.DeserializeRPC(ctx)) {
+			delete e;
 			return false;
+		}
+
 		for (int i = 0; i < m_PAS.Count(); i++) {
 			if (vector.Distance(m_PAS[i], e.position) < e.radius) {
 				EffectSound alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), m_PAS[i]);
@@ -87,6 +95,7 @@ class RadioNotificationClientHandler {
 			}
 		}
 
+		delete e;
 		return true;
 	}
 
@@ -176,11 +185,17 @@ class RadioNotificationClientHandler {
 				p.Insert(e.phonetics[i]);
 			}
 		}
+
+		// swap the phonetics array out once we detokenize
 		delete e.phonetics;
 		e.phonetics = p;
 
 		// Pump the event to all the radios near the client
 		Event_RadioNotification.Invoke(e);
+
+		// Copies are made by the transmitter contexts, so we can delete this.
+		delete e;
+
 		return true;
 	}
 }

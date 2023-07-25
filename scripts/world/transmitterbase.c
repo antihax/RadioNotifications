@@ -17,7 +17,9 @@ modded class TransmitterBase {
 			m_RNTC = new RadioNotificationTransmitterContext(this);
 	}
 
-	void ~TransmitterBase() { delete m_RNTC; }
+	void ~TransmitterBase() {
+		delete m_RNTC;
+	}
 
 	override void OnWorkStart() {
 		if (m_RNTC)

@@ -27,6 +27,14 @@ class RadioNotificationManager {
 
 	void ~RadioNotificationManager() {
 		m_Settings.Save();
+		delete m_Settings;
+
+		delete m_ActiveEvents;
+
+		if (m_NotificationPump) {
+			m_NotificationPump.Stop();
+			delete m_NotificationPump;
+		}
 	}
 
 	// StartNotificationPump has to performed after server is live.
@@ -72,6 +80,7 @@ class RadioNotificationManager {
 		rpc.Write(RadioNotificationRPC.CONFIGURATION);
 		m_Settings.SerializeRPC(rpc);
 		rpc.Send(player, RPC_ANTIHAX_RADIONOTIFICATIONS, true, player.GetIdentity());
+		delete rpc;
 	}
 
 	void SendRadioNotificationEvent(RadioNotificationEvent e) {

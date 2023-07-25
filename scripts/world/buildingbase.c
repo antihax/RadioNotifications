@@ -13,6 +13,13 @@ modded class BuildingBase {
 	protected int m_RadioNotificationID;
 	protected ref Timer m_RadioNotificationUpdateTimer;
 
+	void ~BuildingBase() {
+		if (m_RadioNotificationUpdateTimer) {
+			m_RadioNotificationUpdateTimer.Stop();
+			delete m_RadioNotificationUpdateTimer;
+		}
+	}
+
 	override void EEInit() {
 		super.EEInit();
 		// Shut up the script errors... Some statics are crawling through here very early.

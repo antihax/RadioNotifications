@@ -44,8 +44,20 @@ class RadioNotificationTransmitterContext {
 		// We can race deleting these this stack.
 		if (GetRadioNotificationClientHandler())
 			GetRadioNotificationClientHandler().Event_RadioNotification.Remove(On_RadioNotification);
-		m_ActiveVoiceCancelTimer.Stop();
-		m_VoiceDequeue.Stop();
+
+		// remove voice cancel timer
+		if (m_ActiveVoiceCancelTimer) {
+			m_ActiveVoiceCancelTimer.Stop();
+			delete m_ActiveVoiceCancelTimer;
+		}
+
+		// remove voice dequeue
+		if (m_VoiceDequeue) {
+			m_VoiceDequeue.Stop();
+			delete m_VoiceDequeue;
+		}
+
+		// Remove active sounds; they autodelete
 		if (m_ActiveVoiceSound)
 			m_ActiveVoiceSound.SoundStop();
 		if (m_ActiveNoiseSound)
@@ -82,7 +94,7 @@ class RadioNotificationTransmitterContext {
 				auto p = m_CurrentRadioNotificationEvent.phonetics.Get(0);
 				m_CurrentRadioNotificationEvent.phonetics.RemoveOrdered(0);
 				if (p < 0) {
-					Print("RadioNotification::NextSegment Invalid phonetic " + p.ToString()
+					Print("RadioNotification::NextSegment Invalid phonetic " + p.ToString());
 					m_CurrentRadioNotificationEvent.state = 3;
 					break;
 				}
