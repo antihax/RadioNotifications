@@ -100,8 +100,6 @@ class RadioNotificationTransmitterContext {
 
 		case 3:
 			NoiseStop();
-			delete m_CurrentRadioNotificationEvent;
-			m_CurrentRadioNotificationEvent = null;
 			return; // exit the loop
 		}
 
@@ -134,6 +132,11 @@ class RadioNotificationTransmitterContext {
 			m_ActiveNoiseSound.SoundStop();
 		if (m_ActiveVoiceSound)
 			m_ActiveVoiceSound.SoundStop();
+
+		if (m_CurrentRadioNotificationEvent)
+			delete m_CurrentRadioNotificationEvent;
+		m_CurrentRadioNotificationEvent = null;
+
 		m_ActiveVoiceCancelTimer.Stop();
 		m_PlayingNoise = false;
 		m_PlayingVoice = false;
