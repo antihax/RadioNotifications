@@ -102,7 +102,6 @@ class RadioNotificationEvent {
 		len = (p >> 16) & 0xFF;	  // second 8 bits
 		heading = p & 0xFFFF;	  // last 16 bits
 
-		phonetics = new array<int>;
 		while (len--) {
 			if (!ctx.Read(p))
 				return false;
