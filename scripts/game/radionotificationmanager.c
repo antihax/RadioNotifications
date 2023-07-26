@@ -20,12 +20,15 @@ class RadioNotificationManager {
 	void RadioNotificationManager() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.Load();
+		// Add static events and add position
 		for (int i = 0; i < m_Settings.staticEvents.Count(); i++) {
-			AddEvent(m_Settings.staticEvents[i]);
+			m_Settings.staticEvents[i].anEvent.position = m_Settings.staticEvents[i].position;
+			AddEvent(m_Settings.staticEvents[i].anEvent);
 		}
 	}
 
 	void ~RadioNotificationManager() {
+		// Don't save settings, it's annoying for the inexperienced admins
 		m_Settings.Save();
 		delete m_Settings;
 

@@ -8,6 +8,11 @@
  *
  **/
 
+class RadioNotificationStaticPair {
+	vector position;
+	RadioNotificationEvent anEvent; // cant call it event, reserved word
+}
+
 class RadioNotificationSettings {
 	// Furthest distance a transmission can be heard.
 	int maxDistance;
@@ -28,11 +33,14 @@ class RadioNotificationSettings {
 	// Randomize noise to minimize predicting the message type
 	bool randomNoise;
 
+	// Disable players broadcasting on the radio
+	bool disablePlayerBroadcast;
+
 	// Map of events to their typeNames.
 	ref map<string, RadioNotificationEvent> eventMap;
 
 	// Static events to always repeat.
-	ref array<RadioNotificationEvent> staticEvents;
+	ref array<RadioNotificationStaticPair> staticEvents;
 
 	// Map of alarms to their typeNames.
 	ref map<string, RadioNotificationAlarmEvent> alarmMap;
@@ -42,7 +50,7 @@ class RadioNotificationSettings {
 
 	void RadioNotificationSettings() {
 		eventMap = new map<string, RadioNotificationEvent>();
-		staticEvents = new array<RadioNotificationEvent>();
+		staticEvents = new array<RadioNotificationStaticPair>();
 		alarmMap = new map<string, RadioNotificationAlarmEvent>();
 	}
 
@@ -72,6 +80,7 @@ class RadioNotificationSettings {
 		if (FileExist(SETTINGS))
 			JsonFileLoader<RadioNotificationSettings>.JsonLoadFile(SETTINGS, this);
 		else {
+			// Save default settings
 			DefaultSettings();
 			Save();
 		}
@@ -86,12 +95,14 @@ class RadioNotificationSettings {
 
 	void DefaultSettings() {
 		maxDistance = 5000;
-		baseRadioMultiplier = 2.5;
-		ignoreDistance = 1000;
+		baseRadioMultiplier = 1.75;
+		ignoreDistance = 2000;
 		minVolume = 0.1;
 		maxVolume = 1.0;
-		eventMap.Insert("Wreck_Mi8_Crashed", new RadioNotificationEvent(1, 0, 3, 1, {36, 37, 45, 22, 18, 8, 41, 128, 41, 128, 42}, 1, 60, 5));
-		eventMap.Insert("Wreck_UH1Y", new RadioNotificationEvent(1, 1, 2, 1, {36, 37, 45, 30, 17, 1, 34, 41, 128, 41, 128, 42}, 1, 60, 5));
+		radioChannel = 2;
+		disablePlayerBroadcast = true;
+		eventMap.Insert("Wreck_Mi8_Crashed", new RadioNotificationEvent(1, 0, 3, 1, {36, 37, 45, 22, 18, 8, 41, 128, 41, 128, 42}, 1, 300, 5));
+		eventMap.Insert("Wreck_UH1Y", new RadioNotificationEvent(1, 1, 2, 1, {36, 37, 45, 30, 17, 1, 34, 41, 128, 41, 128, 42}, 1, 300, 5));
 		alarmMap.Insert("ContaminatedArea_Dynamic", new RadioNotificationAlarmEvent(0));
 	}
 
