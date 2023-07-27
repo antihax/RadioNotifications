@@ -6,7 +6,7 @@ set modpath=%DAYZ%%\!Workshop
 set srcpath=P:\RadioNotifications
 set path2=P:\RadioNotifications\Source\dist
 set exportPath=p:\RadioNotifications\Source\dist\RadioNotifications
-set allclientmods=%modpath%\@CF;%modpath%\@VanillaPlusPlusMap;%modpath%\@VPPAdminTools;%modpath%\@RedFalcon Flight System Heliz;%modpath%\@Airdrop-Upgraded;%modpath%\@DNA_Keycards;
+set allclientmods=%modpath%\@CF;%modpath%\@VanillaPlusPlusMap;%modpath%\@VPPAdminTools;%modpath%\@RedFalcon Flight System Heliz;%modpath%\@Airdrop-Upgraded;%modpath%\@DNA_Keycards;%modpath%\@RUSForma_vehicles;
 set currentMod=%path2%\RadioNotifications;
 
 %DAYZTOOLS%\Bin\CfgConvert\CfgConvert.exe -bin -dst %srcpath%\config.bin  %srcpath%\config.cpp

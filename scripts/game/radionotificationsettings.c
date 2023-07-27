@@ -65,6 +65,7 @@ class RadioNotificationSettings {
 		ctx.Write(randomNoise);
 		ctx.Write(radioChannel);
 		ctx.Write(baseRadioMultiplier);
+		ctx.Write(disablePlayerBroadcast);
 		return true;
 	}
 
@@ -73,6 +74,7 @@ class RadioNotificationSettings {
 		ctx.Read(randomNoise);
 		ctx.Read(radioChannel);
 		ctx.Read(baseRadioMultiplier);
+		ctx.Read(disablePlayerBroadcast);
 		return true;
 	}
 
