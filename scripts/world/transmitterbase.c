@@ -13,8 +13,7 @@ modded class TransmitterBase {
 	protected ref RadioNotificationTransmitterContext m_RNTC;
 
 	void TransmitterBase() {
-		if (GetGame().IsClient())
-			m_RNTC = new RadioNotificationTransmitterContext(this);
+		m_RNTC = new RadioNotificationTransmitterContext(this);
 	}
 
 	void ~TransmitterBase() {
@@ -31,6 +30,48 @@ modded class TransmitterBase {
 		if (m_RNTC)
 			m_RNTC.OnWorkStop();
 		super.OnWorkStop();
+	}
+}
+#else
+modded class TransmitterBase {
+	void TransmitterBase() {
+	}
+
+	void ~TransmitterBase() {
+	}
+
+	void SwitchBroadcastAndReceiveEnabled(bool enable) {
+		if (GetRadioNotificationManager().m_Settings.disablePlayerBroadcast) {
+			if (GetRadioNotificationManager().m_Settings.radioChannel == GetTunedFrequencyIndex() % 8) {
+				EnableBroadcast(false);
+				EnableReceive(false);
+				return;
+			}
+		}
+		EnableBroadcast(enable);
+		EnableReceive(enable);
+	}
+
+	override bool OnStoreLoad(ParamsReadContext ctx, int version) {
+		if (!super.OnStoreLoad(ctx, version))
+			return false;
+		SwitchBroadcastAndReceiveEnabled(IsOn());
+		return true;
+	}
+
+	override void SetNextFrequency(PlayerBase player = NULL) {
+		super.SetNextFrequency(player);
+		SwitchBroadcastAndReceiveEnabled(IsOn());
+	}
+
+	override void OnWorkStart() {
+		super.OnWorkStart();
+		SwitchBroadcastAndReceiveEnabled(true);
+	}
+
+	override void OnWorkStop() {
+		super.OnWorkStop();
+		SwitchBroadcastAndReceiveEnabled(false);
 	}
 }
 #endif

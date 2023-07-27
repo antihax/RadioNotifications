@@ -25,7 +25,6 @@ modded class BuildingBase {
 		// Shut up the script errors... Some statics are crawling through here very early.
 		if (GetRadioNotificationManager()) {
 			m_RadioNotificationID = GetRadioNotificationManager().GetNewTransmissionID(GetType(), GetPosition());
-			//	Print("BuildingBase::EEInit " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
 			if (m_RadioNotificationID > 0) {
 				m_RadioNotificationUpdateTimer = new Timer(CALL_CATEGORY_SYSTEM);
 				m_RadioNotificationUpdateTimer.Run(0.25, this, "EOnRadioNotificationUpdate", null, true);
@@ -33,11 +32,9 @@ modded class BuildingBase {
 		} else {
 			Print("BuildingBase::EEInit Warning! Manager Unavailable " + GetType() + " " + GetPosition());
 		}
-		Print("BuildingBase::EEInit " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
 	}
 
 	void EOnRadioNotificationUpdate() {
-		// Print("BuildingBase::EOnRadioNotificationUpdate " + GetType() + " " + GetPosition() + " " + m_RadioNotificationID);
 		GetRadioNotificationManager().UpdateEventPosition(m_RadioNotificationID, GetPosition(), GetDirection());
 	}
 

@@ -29,7 +29,7 @@ class RadioNotificationManager {
 
 	void ~RadioNotificationManager() {
 		// Don't save settings, it's annoying for the inexperienced admins
-		m_Settings.Save();
+		// m_Settings.Save();
 		delete m_Settings;
 
 		delete m_ActiveEvents;
@@ -73,7 +73,6 @@ class RadioNotificationManager {
 			}
 		} else {
 			RemoveEvent(m_EventIDs[m_EventPointer]);
-			Print("Event " + m_EventIDs[m_EventPointer] + " not found, attempting to remove.");
 		}
 		m_EventPointer++;
 	}

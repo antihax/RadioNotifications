@@ -77,7 +77,6 @@ class RadioNotificationTransmitterContext {
 
 		// Something broke.
 		if (!m_CurrentRadioNotificationEvent) {
-			Print("RadioNotification::NextSegment m_CurrentRadioNotificationEvent is null");
 			NoiseStop();
 			return;
 		}
@@ -155,15 +154,6 @@ class RadioNotificationTransmitterContext {
 		UpdateVolumes();
 	}
 
-	// Disables broadcast and receive on the radio. if we are on our special channel
-	void DisableBroadcastState() {
-		if (GetRadioNotificationClientHandler().m_Settings.disablePlayerBroadcast) {
-			bool state = m_Transmitter.GetTunedFrequencyIndex() % 8 == GetRadioNotificationClientHandler().m_Settings.radioChannel;
-			m_Transmitter.EnableBroadcast(!state);
-			m_Transmitter.EnableReceive(!state);
-		}
-	}
-
 	// Dequeue and play the next notification in the queue. These will be a
 	// slightly bit desynced.
 	void RunVoiceDequeue() {
@@ -227,11 +217,6 @@ class RadioNotificationTransmitterContext {
 
 	// Update the volumes of the active sounds based on distance.
 	void UpdateVolumes() {
-
-		// Deal with the broadcast and receive stats
-		// This is not the best way but we cannot override further fuctions
-		DisableBroadcastState();
-
 		// If we are not playing anything, don't bother.
 		if (!m_CurrentRadioNotificationEvent)
 			return;
