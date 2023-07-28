@@ -20,8 +20,8 @@ modded class BuildingBase {
 		}
 	}
 
-	override void EEInit() {
-		super.EEInit();
+	override void DeferredInit() {
+		super.DeferredInit();
 		// Shut up the script errors... Some statics are crawling through here very early.
 		if (GetRadioNotificationManager()) {
 			m_RadioNotificationID = GetRadioNotificationManager().GetNewTransmissionID(GetType(), GetPosition());
@@ -30,7 +30,7 @@ modded class BuildingBase {
 				m_RadioNotificationUpdateTimer.Run(0.25, this, "EOnRadioNotificationUpdate", null, true);
 			}
 		} else {
-			Print("BuildingBase::EEInit Warning! Manager Unavailable " + GetType() + " " + GetPosition());
+			Print("BuildingBase::DeferredInit Warning! Manager Unavailable " + GetType() + " " + GetPosition());
 		}
 	}
 
