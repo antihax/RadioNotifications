@@ -24,10 +24,6 @@ class RadioNotificationTransmitterContext {
 	protected bool m_PlayingNoise = false;
 	protected bool m_PlayingVoice = false;
 
-	// Distance to ignore notifications. Should be a significant distance a
-	// player could not move in the time it takes to play a notification.
-	protected static const float IGNORE_THREASHOLD = 10000; // meters
-
 	// Parent
 	protected TransmitterBase m_Transmitter;
 
@@ -65,8 +61,16 @@ class RadioNotificationTransmitterContext {
 	}
 
 	void On_RadioNotification(RadioNotificationEvent e) {
-		// Make a copy so we don't race playing the same notification.
-		m_RadioNotificationQueue.Insert(e.Clone());
+
+		// Too far, ignore
+		float distanceMultiplier = GetRadioNotificationClientHandler().m_Settings.baseRadioMultiplier;
+		float distance = Math.AbsFloat(vector.Distance(m_Transmitter.GetPosition(), e.position)) / distanceMultiplier;
+		float MAX_DISTANCE = GetRadioNotificationClientHandler().m_Settings.maxDistance;
+		float IGNORE_DISTANCE = GetRadioNotificationClientHandler().m_Settings.ignoreDistance;
+		if (distance < (MAX_DISTANCE + IGNORE_DISTANCE)) {
+			// Make a copy so we don't race playing the same notification.
+			m_RadioNotificationQueue.Insert(e.Clone());
+		}
 	}
 
 	// NextSegment plays audio in order.
@@ -222,9 +226,9 @@ class RadioNotificationTransmitterContext {
 			return;
 
 		// Hopefully this gets optimized out, but for readability sake.
-		const float MAX_VOLUME = GetRadioNotificationClientHandler().m_Settings.maxVolume;
-		const float MIN_VOLUME = GetRadioNotificationClientHandler().m_Settings.minVolume;
-		const float MAX_DISTANCE = GetRadioNotificationClientHandler().m_Settings.maxDistance;
+		float MAX_VOLUME = GetRadioNotificationClientHandler().m_Settings.maxVolume;
+		float MIN_VOLUME = GetRadioNotificationClientHandler().m_Settings.minVolume;
+		float MAX_DISTANCE = GetRadioNotificationClientHandler().m_Settings.maxDistance;
 
 		float distanceMultiplier = 1.0;
 		if (m_Transmitter.GetType() == "BaseRadio")
