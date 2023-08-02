@@ -237,7 +237,7 @@ class RadioNotificationTransmitterContext {
 		// Noise louder the further, voice louder the closer.
 		float distance = Math.AbsFloat(vector.Distance(m_Transmitter.GetPosition(), m_CurrentRadioNotificationEvent.position)) / distanceMultiplier;
 		m_VoiceVolume = Math.Clamp(1 - (distance / MAX_DISTANCE), MIN_VOLUME, MAX_VOLUME);
-		m_NoiseVolume = Math.Clamp(distance / MAX_DISTANCE, MIN_VOLUME, MAX_VOLUME);
+		m_NoiseVolume = Math.Clamp(distance / MAX_DISTANCE, 0.1, MAX_VOLUME); // Hardcoded minimum noise volume.
 
 		// If the radio is off, or we are too far, silence.
 		// If we are not on the right channel, silence.
