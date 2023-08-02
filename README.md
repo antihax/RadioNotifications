@@ -147,15 +147,15 @@ RadioNotificationEvent are the core data structure and have the following compon
 
 ### preamble `int`
 
-The initial burst during the transmission. 255 disables.
+The initial burst during the transmission. 255 disables. Range is 0 through 8.
 
 ### voice `int`
 
-The voice for the broadcast
+The voice for the broadcast. Current range is 0 through 9.
 
 ### noise `int`
 
-The background static noise for the broadcast.
+The background static noise for the broadcast. Current range is 0 through 7.
 
 ### signature `int`
 
