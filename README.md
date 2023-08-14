@@ -96,7 +96,7 @@ The eventMap allows events to be broadcast when a new BuildingBase is created.
                 42
             ],
             "pause": 1,
-            "delay": 60,
+            "delay": 300,
             "repeat": 5
         }
     }
@@ -120,8 +120,8 @@ The array staticEvents provides constantly looping notifications for a fixed wor
                 "noise": 0,
                 "signature": 0,
                 "phonetics": [1,2,3,4,5,6],
-                "pause": 0,
-                "delay": 0,
+                "pause": 1,
+                "delay": 900,
                 "repeat": 0
             }
         }

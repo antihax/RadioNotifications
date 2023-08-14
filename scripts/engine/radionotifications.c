@@ -8,7 +8,7 @@
  *
  **/
 
-#define RADIONOTIFICATIONS 1
+#define RADIONOTIFICATIONS
 
 class RadioNotificationEvent {
 	int preamble;
