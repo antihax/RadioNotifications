@@ -12,7 +12,7 @@
 // Our context class for the transmitters.
 class RadioNotificationTransmitterContext {
 	protected ref Timer m_VoiceDequeue;
-	protected ref array<RadioNotificationEvent> m_RadioNotificationQueue = {};
+	protected ref array<ref RadioNotificationEvent> m_RadioNotificationQueue = {};
 	protected ref RadioNotificationEvent m_CurrentRadioNotificationEvent;
 	protected ref Timer m_ActiveVoiceCancelTimer;
 

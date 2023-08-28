@@ -16,14 +16,25 @@ class RadioNotificationManager {
 	protected int m_EventPointer;
 	protected ref Timer m_NotificationPump;
 	protected ref array<int> m_EventIDs = {};
+	protected int m_RPC_CONFIGURATION, m_RPC_RADIONOTIFICATION, m_RPC_RADIONOTIFICATIONALARM;
 
 	void RadioNotificationManager() {
+		// Cache RPCs
+		m_RPC_CONFIGURATION = GetBitWiseManager().GetIndexForKeyword("RadioNotifications", "CONFIGURATION");
+		m_RPC_RADIONOTIFICATION = GetBitWiseManager().GetIndexForKeyword("RadioNotifications", "RADIONOTIFICATION");
+		m_RPC_RADIONOTIFICATIONALARM = GetBitWiseManager().GetIndexForKeyword("RadioNotifications", "RADIONOTIFICATIONALARM");
+
+		// Load settings
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.Load();
+
 		// Add static events and add position
 		for (int i = 0; i < m_Settings.staticEvents.Count(); i++) {
 			m_Settings.staticEvents[i].anEvent.position = m_Settings.staticEvents[i].position;
 			AddEvent(m_Settings.staticEvents[i].anEvent);
+#ifdef RADIONOTIFICATIONS_DEBUG
+			Print("add " + m_Settings.staticEvents[i].anEvent.Dump());
+#endif
 		}
 	}
 
@@ -49,6 +60,9 @@ class RadioNotificationManager {
 	// Run events
 	void RunNotificationPump() {
 		if (m_EventIDs.Count() == 0) {
+#ifdef RADIONOTIFICATIONS_DEBUG
+			Print("No events");
+#endif
 			return;
 		}
 
@@ -56,6 +70,7 @@ class RadioNotificationManager {
 			m_EventPointer = 0;
 
 		auto e = m_ActiveEvents.Get(m_EventIDs[m_EventPointer]);
+		++m_EventPointer;
 		if (e) {
 			if ((GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
 
@@ -64,7 +79,7 @@ class RadioNotificationManager {
 
 				// Delete the event if it has repeats expires
 				if (e.repeat > 0) {
-					e.ticks++;
+					++e.ticks;
 					if (e.ticks > e.repeat) {
 						RemoveEvent(m_EventIDs[m_EventPointer]);
 						return;
@@ -74,30 +89,31 @@ class RadioNotificationManager {
 		} else {
 			RemoveEvent(m_EventIDs[m_EventPointer]);
 		}
-		m_EventPointer++;
 	}
 
 	void SendConfiguration(notnull Man player) {
-		ScriptRPC rpc = new ScriptRPC();
-		rpc.Write(RadioNotificationRPC.CONFIGURATION);
+		BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_CONFIGURATION);
 		m_Settings.SerializeRPC(rpc);
-		rpc.Send(player, RPC_ANTIHAX_RADIONOTIFICATIONS, true, player.GetIdentity());
+		rpc.Send(player, true, player.GetIdentity());
 		delete rpc;
 	}
 
 	void SendRadioNotificationEvent(RadioNotificationEvent e) {
-		ScriptRPC rpc = new ScriptRPC();
-		rpc.Write(RadioNotificationRPC.RADIONOTIFICATION);
-		e.SerializeRPC(rpc);
-		rpc.Send(null, RPC_ANTIHAX_RADIONOTIFICATIONS, true);
+#ifdef RADIONOTIFICATIONS_DEBUG
+		Print("send " + e.Dump());
+#endif
+		BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_RADIONOTIFICATION);
+		if (!e.SerializeRPC(rpc)) {
+			Print("Failed to serialize RPC");
+		}
+		rpc.Send(null, true);
 		delete rpc;
 	}
 
 	void SendRadioNotificationAlarmEvent(RadioNotificationAlarmEvent e) {
-		ScriptRPC rpc = new ScriptRPC();
-		rpc.Write(RadioNotificationRPC.RADIONOTIFICATIONALARM);
+		BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_RADIONOTIFICATIONALARM);
 		e.SerializeRPC(rpc);
-		rpc.Send(null, RPC_ANTIHAX_RADIONOTIFICATIONS, true);
+		rpc.Send(null, true);
 		delete rpc;
 	}
 
@@ -124,6 +140,9 @@ class RadioNotificationManager {
 		m_TransmissionID++;
 		m_ActiveEvents.Insert(m_TransmissionID, e);
 		m_EventIDs.Insert(m_TransmissionID);
+#ifdef RADIONOTIFICATIONS_DEBUG
+		Print("add event " + e.Dump());
+#endif
 		return m_TransmissionID;
 	}
 
@@ -149,6 +168,9 @@ class RadioNotificationManager {
 	void RemoveEvent(int id) {
 		m_EventIDs.RemoveItem(id);
 		m_ActiveEvents.Remove(id);
+#ifdef RADIONOTIFICATIONS_DEBUG
+		Print("add event " + id.ToString());
+#endif
 	}
 }
 
@@ -156,4 +178,9 @@ protected ref RadioNotificationManager g_RadioNotificationManager;
 static RadioNotificationManager GetRadioNotificationManager() {
 	return g_RadioNotificationManager;
 }
+
+static RadioNotificationSettings GetRadioNotificationSettings() {
+	return g_RadioNotificationManager.m_Settings;
+}
+
 #endif

@@ -24,6 +24,9 @@ class RadioNotificationClientHandler {
 	void RadioNotificationClientHandler() {
 		m_Settings = new RadioNotificationSettings();
 		m_Settings.DefaultSettings();
+		GetBitWiseManager().ConnectEndpoint("RadioNotifications", "CONFIGURATION", ScriptCaller.Create(ConfigurationRPC));
+		GetBitWiseManager().ConnectEndpoint("RadioNotifications", "RADIONOTIFICATION", ScriptCaller.Create(RadioNotificationEventRPC));
+		GetBitWiseManager().ConnectEndpoint("RadioNotifications", "RADIONOTIFICATIONALARM", ScriptCaller.Create(RadioNotificationAlarmEventRPC));
 	}
 
 	void ~RadioNotificationClientHandler() {
@@ -35,57 +38,27 @@ class RadioNotificationClientHandler {
 		m_PAS.Insert(loc);
 	}
 
-	bool OnRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
-		int t;
-		// Read our RPC type
-		if (!ctx.Read(t)) {
-			return false;
-		}
-
-		switch (t) {
-		case RadioNotificationRPC.CONFIGURATION:
-			if (!ConfigurationRPC(ctx)) {
-				Print("RadioNotificationClientHandler::OnRPC ConfigurationRPC failed!");
-				return false;
-			}
-			break;
-
-		case RadioNotificationRPC.RADIONOTIFICATION:
-			if (!RadioNotificationEventRPC(ctx)) {
-				Print("RadioNotificationClientHandler::OnRPC RadioNotificationRPC failed!");
-				return false;
-			}
-			break;
-
-		case RadioNotificationRPC.RADIONOTIFICATIONALARM:
-			if (!RadioNotificationAlarmEventRPC(ctx)) {
-				Print("RadioNotificationClientHandler::OnRPC RadioNotificationRPC failed!");
-				return false;
-			}
-			break;
-
-		default:
-			Print("RadioNotificationClientHandler::OnRPC Unknown RPC type " + t);
-			return false;
-		}
-
-		return true;
-	}
-
 	// Read our configuration from the server
-	bool ConfigurationRPC(ParamsReadContext ctx) {
-		if (!m_Settings.DeserializeRPC(ctx))
+	bool ConfigurationRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
+		if (!m_Settings.DeserializeRPC(new BitStreamReader(ctx)))
 			return false;
+#ifdef RADIONOTIFICATIONS_DEBUG
+		Print(m_Settings.Dump());
+#endif
 		return true;
 	}
 
 	// Server sent alarm
-	bool RadioNotificationAlarmEventRPC(ParamsReadContext ctx) {
-		RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
-		if (!e.DeserializeRPC(ctx)) {
+	bool RadioNotificationAlarmEventRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
+		ref RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
+		if (!e.DeserializeRPC(new BitStreamReader(ctx))) {
 			delete e;
 			return false;
 		}
+
+#ifdef RADIONOTIFICATIONS_DEBUG
+		Print(e.Dump());
+#endif
 
 		for (int i = 0; i < m_PAS.Count(); i++) {
 			if (vector.Distance(m_PAS[i], e.position) < e.radius) {
@@ -94,17 +67,22 @@ class RadioNotificationClientHandler {
 				break;
 			}
 		}
-
 		delete e;
 		return true;
 	}
 
 	// Server sent a notification
-	bool RadioNotificationEventRPC(ParamsReadContext ctx) {
-		RadioNotificationEvent e = new RadioNotificationEvent();
-		if (!e.DeserializeRPC(ctx))
-			return false;
+	bool RadioNotificationEventRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
+		ref RadioNotificationEvent e = new RadioNotificationEvent();
 
+		if (!e.DeserializeRPC(new BitStreamReader(ctx))) {
+			delete e;
+			return false;
+		}
+
+#ifdef RADIONOTIFICATIONS_DEBUG
+		Print(e.Dump());
+#endif
 		// [TODO] find a better place for this and optimize it
 		if (e.position[0] <= 0.0)
 			e.position[0] = 0.1;
@@ -192,10 +170,7 @@ class RadioNotificationClientHandler {
 
 		// Pump the event to all the radios near the client
 		Event_RadioNotification.Invoke(e);
-
-		// Copies are made by the transmitter contexts, so we can delete this.
 		delete e;
-
 		return true;
 	}
 }
@@ -203,5 +178,9 @@ class RadioNotificationClientHandler {
 protected ref RadioNotificationClientHandler g_RadioNotificationClientHandler;
 static RadioNotificationClientHandler GetRadioNotificationClientHandler() {
 	return g_RadioNotificationClientHandler;
+}
+
+static RadioNotificationSettings GetRadioNotificationSettings() {
+	return g_RadioNotificationClientHandler.m_Settings;
 }
 #endif

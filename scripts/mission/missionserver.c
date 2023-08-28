@@ -7,16 +7,19 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
  *
  **/
-
 #ifdef SERVER
 modded class MissionServer {
+
 	override void InvokeOnConnect(PlayerBase player, PlayerIdentity identity) {
 		super.InvokeOnConnect(player, identity);
 		if (player)
 			GetRadioNotificationManager().SendConfiguration(player);
 	}
+
 	override void OnInit() {
+		GetRadioNotificationSettings().DetectSoundSets();
 		super.OnInit();
+
 		GetRadioNotificationManager().StartNotificationPump();
 	}
 }

@@ -1,6 +1,6 @@
 class CfgPatches {
-	class RadioNotificationsMod {
-		requiredAddons[] = {"DZ_Data", "DZ_Sounds_Effects"};
+	class RadioNotifications {
+		requiredAddons[] = {"BitWiseFramework", "DZ_Data", "DZ_Sounds_Effects"};
 	};
 };
 
