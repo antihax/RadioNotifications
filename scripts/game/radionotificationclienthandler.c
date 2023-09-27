@@ -1,12 +1,12 @@
-/**
+/*
  * RadioNotifications Mod
  * https://github.com/antihax/RadioNotifications
- * © 2022 antihax
+ * © 2023 antihax
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
  *
- **/
+ */
 
 enum RadioNotificationRPC {
 	CONFIGURATION = 0,
@@ -16,22 +16,26 @@ enum RadioNotificationRPC {
 
 #ifndef SERVER
 class RadioNotificationClientHandler {
-	ref RadioNotificationSettings m_Settings;
-	ref ScriptInvoker Event_RadioNotification = new ScriptInvoker();
-	protected ref array<vector> m_PAS = {};
+	autoptr ScriptInvoker Event_RadioNotification = new ScriptInvoker();
+	protected autoptr array<vector> m_PAS = {};
 	protected static const string GRID_SIZE_CFG_PATH = "CfgWorlds %1 Grid Zoom1 stepX";
 
+	protected string m_PadString;
+	protected string m_CipherTextString;
+	protected string m_KeyString;
+	protected string m_PlainTextString;
+
+	protected int m_KeyCursor;
+	protected int m_PadIndex;
+	protected bool m_ValidPad;
+
 	void RadioNotificationClientHandler() {
-		m_Settings = new RadioNotificationSettings();
-		m_Settings.DefaultSettings();
 		GetBitWiseManager().ConnectEndpoint("RadioNotifications", "CONFIGURATION", ScriptCaller.Create(ConfigurationRPC));
 		GetBitWiseManager().ConnectEndpoint("RadioNotifications", "RADIONOTIFICATION", ScriptCaller.Create(RadioNotificationEventRPC));
 		GetBitWiseManager().ConnectEndpoint("RadioNotifications", "RADIONOTIFICATIONALARM", ScriptCaller.Create(RadioNotificationAlarmEventRPC));
 	}
 
 	void ~RadioNotificationClientHandler() {
-		delete Event_RadioNotification;
-		delete m_Settings;
 	}
 
 	void RegisterPAS(vector loc) {
@@ -40,49 +44,44 @@ class RadioNotificationClientHandler {
 
 	// Read our configuration from the server
 	bool ConfigurationRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
-		if (!m_Settings.DeserializeRPC(new BitStreamReader(ctx)))
+		if (!RadioNotificationSettings.GetSettings().DeserializeRPC(new BitStreamReader(ctx)))
 			return false;
-#ifdef RADIONOTIFICATIONS_DEBUG
-		Print(m_Settings.Dump());
-#endif
+
 		return true;
 	}
 
 	// Server sent alarm
 	bool RadioNotificationAlarmEventRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
-		ref RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
+		autoptr RadioNotificationAlarmEvent e = new RadioNotificationAlarmEvent();
 		if (!e.DeserializeRPC(new BitStreamReader(ctx))) {
-			delete e;
 			return false;
 		}
-
-#ifdef RADIONOTIFICATIONS_DEBUG
-		Print(e.Dump());
-#endif
-
-		for (int i = 0; i < m_PAS.Count(); i++) {
-			if (vector.Distance(m_PAS[i], e.position) < e.radius) {
-				EffectSound alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), m_PAS[i]);
-				alarm.SetAutodestroy(true);
-				break;
+		EffectSound alarm;
+		if (e.fixed) {
+			alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), e.position);
+			alarm.SetAutodestroy(true);
+		} else {
+			for (int i = 0; i < m_PAS.Count(); i++) {
+				if (vector.Distance(m_PAS[i], e.position) < e.radius) {
+					alarm = SEffectManager.PlaySound("RadioNotification_Alarm" + e.alarm.ToString(), m_PAS[i]);
+					alarm.SetAutodestroy(true);
+					// Don't flood with sounds
+					if (i > 4)
+						break;
+				}
 			}
 		}
-		delete e;
 		return true;
 	}
 
 	// Server sent a notification
 	bool RadioNotificationEventRPC(PlayerIdentity sender, Object target, ParamsReadContext ctx) {
-		ref RadioNotificationEvent e = new RadioNotificationEvent();
+		autoptr RadioNotificationEvent e = new RadioNotificationEvent();
 
 		if (!e.DeserializeRPC(new BitStreamReader(ctx))) {
-			delete e;
 			return false;
 		}
 
-#ifdef RADIONOTIFICATIONS_DEBUG
-		Print(e.Dump());
-#endif
 		// [TODO] find a better place for this and optimize it
 		if (e.position[0] <= 0.0)
 			e.position[0] = 0.1;
@@ -170,8 +169,63 @@ class RadioNotificationClientHandler {
 
 		// Pump the event to all the radios near the client
 		Event_RadioNotification.Invoke(e);
-		delete e;
 		return true;
+	}
+
+	/*
+	*	Encryption Code
+	*/
+	void RemoveLetter() {
+		if (!!m_CipherTextString.Length()) {
+			m_CipherTextString = m_CipherTextString.Substring(0, m_CipherTextString.Length() - 1);
+		} else {
+			m_PadString = m_PadString.Substring(0, m_PadString.Length() - 1);
+		}
+	}
+
+	void AddLetter(string l) {
+		if (m_PadString.Length() >= 5) {
+			m_CipherTextString += l;
+			m_PadIndex = RadioNotificationSettings.GetSettings().GetOneTimePad().GetKeyFromPad(m_PadString);
+			if (m_PadIndex >= 0) {
+				DecodeMessage();
+				m_ValidPad = true;
+			} else {
+				m_ValidPad = false;
+			}
+		} else {
+			m_PadString += l;
+			m_PadIndex = -1;
+			m_ValidPad = false;
+		}
+	}
+
+	void DecodeMessage() {
+		m_KeyString = RadioNotificationSettings.GetSettings().GetOneTimePad().GetKey(m_PadIndex, m_CipherTextString.Length());
+		m_PlainTextString = RadioNotificationSettings.GetSettings().GetOneTimePad().DecodeMessage(m_KeyString, m_CipherTextString);
+	}
+
+	void ClearLetters() {
+		m_PadString = "";
+		m_CipherTextString = "";
+		m_KeyString = "";
+		m_PlainTextString = "";
+	}
+
+	string GetPad() {
+		return m_PadString;
+	}
+
+	string GetCipherText() {
+		return m_CipherTextString;
+	}
+
+	string GetKey() {
+		return m_KeyString;
+	}
+
+	string GetPlainText() {
+		return m_PlainTextString;
 	}
 }
 
@@ -180,7 +234,4 @@ static RadioNotificationClientHandler GetRadioNotificationClientHandler() {
 	return g_RadioNotificationClientHandler;
 }
 
-static RadioNotificationSettings GetRadioNotificationSettings() {
-	return g_RadioNotificationClientHandler.m_Settings;
-}
 #endif

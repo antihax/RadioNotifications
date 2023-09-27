@@ -1,4 +1,4 @@
-/**
+/*
  * RadioNotifications Mod
  * https://github.com/antihax/RadioNotifications
  * © 2023 antihax
@@ -6,16 +6,19 @@
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
  *
- **/
+ */
 
 #ifdef SERVER
 class RadioNotificationManager {
 	protected int m_TransmissionID = 1;
-	ref RadioNotificationSettings m_Settings;
-	protected ref map<int, RadioNotificationEvent> m_ActiveEvents = new map<int, RadioNotificationEvent>();
+	protected autoptr map<int, ref RadioNotificationEvent> m_ActiveEvents = new map<int, ref RadioNotificationEvent>();
+	protected autoptr map<int, ref RadioNotificationStaticAlarmPair> m_ActiveAlarms = new map<int, ref RadioNotificationStaticAlarmPair>();
 	protected int m_EventPointer;
-	protected ref Timer m_NotificationPump;
-	protected ref array<int> m_EventIDs = {};
+	protected int m_AlarmPointer;
+	protected autoptr Timer m_NotificationPump;
+	protected autoptr Timer m_AlarmPump;
+	protected autoptr array<int> m_EventIDs = {};
+	protected autoptr array<int> m_AlarmIDs = {};
 	protected int m_RPC_CONFIGURATION, m_RPC_RADIONOTIFICATION, m_RPC_RADIONOTIFICATIONALARM;
 
 	void RadioNotificationManager() {
@@ -24,30 +27,25 @@ class RadioNotificationManager {
 		m_RPC_RADIONOTIFICATION = GetBitWiseManager().GetIndexForKeyword("RadioNotifications", "RADIONOTIFICATION");
 		m_RPC_RADIONOTIFICATIONALARM = GetBitWiseManager().GetIndexForKeyword("RadioNotifications", "RADIONOTIFICATIONALARM");
 
-		// Load settings
-		m_Settings = new RadioNotificationSettings();
-		m_Settings.Load();
-
 		// Add static events and add position
-		for (int i = 0; i < m_Settings.staticEvents.Count(); i++) {
-			m_Settings.staticEvents[i].anEvent.position = m_Settings.staticEvents[i].position;
-			AddEvent(m_Settings.staticEvents[i].anEvent);
-#ifdef RADIONOTIFICATIONS_DEBUG
-			Print("add " + m_Settings.staticEvents[i].anEvent.Dump());
-#endif
+		for (int i = 0; i < RadioNotificationSettings.GetSettings().staticEvents.Count(); i++) {
+			RadioNotificationSettings.GetSettings().staticEvents[i].anEvent.position = RadioNotificationSettings.GetSettings().staticEvents[i].position;
+			AddEvent(RadioNotificationSettings.GetSettings().staticEvents[i].anEvent);
+		}
+
+		// Add static alarms and add position
+		for (i = 0; i < RadioNotificationSettings.GetSettings().staticAlarms.Count(); i++) {
+			RadioNotificationSettings.GetSettings().staticAlarms[i].anEvent.position = RadioNotificationSettings.GetSettings().staticAlarms[i].position;
+			AddAlarm(RadioNotificationSettings.GetSettings().staticAlarms[i]);
 		}
 	}
 
 	void ~RadioNotificationManager() {
-		// Don't save settings, it's annoying for the inexperienced admins
-		// m_Settings.Save();
-		delete m_Settings;
-
-		delete m_ActiveEvents;
-
 		if (m_NotificationPump) {
 			m_NotificationPump.Stop();
-			delete m_NotificationPump;
+		}
+		if (m_AlarmPump) {
+			m_AlarmPump.Stop();
 		}
 	}
 
@@ -55,25 +53,24 @@ class RadioNotificationManager {
 	void StartNotificationPump() {
 		m_NotificationPump = new Timer(CALL_CATEGORY_SYSTEM);
 		m_NotificationPump.Run(1.0, this, "RunNotificationPump", null, true);
+
+		m_AlarmPump = new Timer(CALL_CATEGORY_SYSTEM);
+		m_AlarmPump.Run(1.0, this, "RunAlarmPump", null, true);
 	}
 
 	// Run events
-	void RunNotificationPump() {
+	protected void RunNotificationPump() {
 		if (m_EventIDs.Count() == 0) {
-#ifdef RADIONOTIFICATIONS_DEBUG
-			Print("No events");
-#endif
 			return;
 		}
 
-		if (m_EventPointer > m_EventIDs.Count() - 1)
+		++m_EventPointer;
+		if (m_EventPointer >= m_EventIDs.Count())
 			m_EventPointer = 0;
 
 		auto e = m_ActiveEvents.Get(m_EventIDs[m_EventPointer]);
-		++m_EventPointer;
 		if (e) {
-			if ((GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
-
+			if (!e.lastTime || (GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
 				SendRadioNotificationEvent(e);
 				e.lastTime = e.GetGame().GetTime();
 
@@ -91,96 +88,113 @@ class RadioNotificationManager {
 		}
 	}
 
+	// Run alarms
+	protected void RunAlarmPump() {
+		if (m_AlarmIDs.Count() == 0) {
+			return;
+		}
+
+		++m_AlarmPointer;
+		if (m_AlarmPointer >= m_AlarmIDs.Count())
+			m_AlarmPointer = 0;
+
+		auto e = m_ActiveAlarms.Get(m_AlarmIDs[m_AlarmPointer]);
+		if (e) {
+			if (!e.lastTime || (GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
+				SendRadioNotificationAlarmEvent(e.anEvent);
+				e.lastTime = e.GetGame().GetTime();
+			}
+		}
+	}
+
 	void SendConfiguration(notnull Man player) {
-		BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_CONFIGURATION);
-		m_Settings.SerializeRPC(rpc);
+		autoptr BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_CONFIGURATION);
+		RadioNotificationSettings.GetSettings().SerializeRPC(rpc);
 		rpc.Send(player, true, player.GetIdentity());
-		delete rpc;
 	}
 
 	void SendRadioNotificationEvent(RadioNotificationEvent e) {
-#ifdef RADIONOTIFICATIONS_DEBUG
-		Print("send " + e.Dump());
-#endif
-		BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_RADIONOTIFICATION);
+		autoptr BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_RADIONOTIFICATION);
 		if (!e.SerializeRPC(rpc)) {
 			Print("Failed to serialize RPC");
 		}
 		rpc.Send(null, true);
-		delete rpc;
 	}
 
 	void SendRadioNotificationAlarmEvent(RadioNotificationAlarmEvent e) {
-		BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_RADIONOTIFICATIONALARM);
+		autoptr BitWiseScriptRPC rpc = BitWiseScriptRPC.NewFromID(m_RPC_RADIONOTIFICATIONALARM);
 		e.SerializeRPC(rpc);
 		rpc.Send(null, true);
-		delete rpc;
 	}
 
 	// Get a unique ID for a transmission
 	// Returns zero if the transmission is ignored.
 	int GetNewTransmissionID(string type, vector position) {
-		auto a = m_Settings.GetAlarm(type);
+		auto a = RadioNotificationSettings.GetSettings().GetAlarm(type);
 		if (a) {
 			a.position = position;
 			SendRadioNotificationAlarmEvent(a);
 		}
 
-		auto e = m_Settings.GetEvent(type);
+		auto e = RadioNotificationSettings.GetSettings().GetEvent(type);
 		if (!e)
 			return 0;
-		e.position = position;
 
-		return AddEvent(e);
+		// Pin this to memory
+		ref RadioNotificationEvent newEvent = e.Clone();
+		newEvent.position = position;
+
+		return AddEvent(newEvent);
 	}
 
 	// Add a new RadioNotificationEvent to the queue.
 	// Get a unique ID for a transmission
 	int AddEvent(RadioNotificationEvent e) {
-		m_TransmissionID++;
+		++m_TransmissionID;
 		m_ActiveEvents.Insert(m_TransmissionID, e);
 		m_EventIDs.Insert(m_TransmissionID);
-#ifdef RADIONOTIFICATIONS_DEBUG
-		Print("add event " + e.Dump());
-#endif
+		return m_TransmissionID;
+	}
+
+	// Add a new RadioNotificationAlarmEvent to the queue.
+	// Get a unique ID for a transmission
+	int AddAlarm(RadioNotificationStaticAlarmPair e) {
+		Print("add alarm");
+		++m_TransmissionID;
+		m_ActiveAlarms.Insert(m_TransmissionID, e);
+		m_AlarmIDs.Insert(m_TransmissionID);
 		return m_TransmissionID;
 	}
 
 	void UpdateEventPosition(int id, vector position, vector direction) {
-		//("Updating position " + id + " to " + position);
 		auto e = m_ActiveEvents.Get(id);
 		if (e) {
 			e.position = position;
 
 			// Calculate heading
-			position[1] = 0;
-			direction[1] = 0;
-			position.Normalize();
-			direction.Normalize();
-			vector cross = position * direction;
-
-			e.heading = Math.Acos(vector.Dot(position, direction)) * Math.RAD2DEG;
-			if (cross[1] < 0)
-				e.heading = -e.heading;
+			vector dir = direction - position;
+			dir[1] = 0;
+			dir.Normalize();
+			vector north = "0 0 1";
+			vector east = "1 0 0";
+			vector heading = north * dir;
+			float angle = Math.Acos(vector.Dot(east, heading)) * Math.RAD2DEG;
+			if (vector.Dot(north, heading) < 0) {
+				angle = 360 - angle;
+			}
+			e.heading = angle;
 		}
 	}
 
 	void RemoveEvent(int id) {
 		m_EventIDs.RemoveItem(id);
 		m_ActiveEvents.Remove(id);
-#ifdef RADIONOTIFICATIONS_DEBUG
-		Print("add event " + id.ToString());
-#endif
 	}
 }
 
 protected ref RadioNotificationManager g_RadioNotificationManager;
 static RadioNotificationManager GetRadioNotificationManager() {
 	return g_RadioNotificationManager;
-}
-
-static RadioNotificationSettings GetRadioNotificationSettings() {
-	return g_RadioNotificationManager.m_Settings;
 }
 
 #endif

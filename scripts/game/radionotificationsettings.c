@@ -1,4 +1,4 @@
-/**
+/*
  * RadioNotifications Mod
  * https://github.com/antihax/RadioNotifications
  * © 2023 antihax
@@ -6,61 +6,108 @@
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
  *
- **/
+ */
 
-class RadioNotificationStaticPair {
-	vector position;
-	RadioNotificationEvent anEvent; // cant call it event, reserved word
-}
-
+/**
+ * RadioNotificationSettings is a singleton class that stores all the settings for the mod configured from the JSON file
+ * at $profile:RadioNotifications/Settings.json
+ */
 class RadioNotificationSettings {
-	// Furthest distance a transmission can be heard.
+	[NonSerialized()]
+	static ref RadioNotificationSettings m_Settings;
+
+	/// Called internally to initialize the singleton.
+	static void Init() {
+		m_Settings = new RadioNotificationSettings();
+	}
+
+	/// GetSettings returns the loaded settings. Should be called after mission start by mod developers.
+	static RadioNotificationSettings GetSettings() {
+		return m_Settings;
+	}
+
+	/// Expected version, used to detect if settings need to be reset. Not user configurable.
+	[NonSerialized()]
+	const int expectedVersion = 1;
+
+	/// Current version, used to detect if settings need to be reset. Not user configurable.
+	int version;
+
+	/// Furthest distance a transmission can be heard.
 	int maxDistance;
 
-	// Multiplier for base radios.
+	/// Multiplier for base radios.
 	float baseRadioMultiplier;
 
-	// Falloff to ignore transmissions.
+	/// Falloff to ignore transmissions.
 	int ignoreDistance;
 
-	// Volume range for transmissions.
+	/// Volume range for transmissions.
 	float minVolume;
+
+	/// Volume range for transmissions.
 	float maxVolume;
 
-	// Radio Channel Broadcast
+	/// Radio Channel Broadcast.
 	int radioChannel;
 
-	// Randomize noise to minimize predicting the message type
+	/// Enable randomize noise to minimize predicting the message type.
 	bool randomNoise;
 
-	// Disable players broadcasting on the radio
+	/// Disable players broadcasting on the radio.
 	bool disablePlayerBroadcast;
 
-	// Map of events to their typeNames.
-	ref map<string, RadioNotificationEvent> eventMap;
+	/// Map of events to their typeNames. See RadioNotificationEvent for more information.
+	autoptr map<string, RadioNotificationEvent> eventMap;
 
-	// Static events to always repeat.
-	ref array<RadioNotificationStaticPair> staticEvents;
+	/// Static events to always repeat. See RadioNotificationStaticPair for more information.
+	autoptr array<RadioNotificationStaticPair> staticEvents;
 
-	// Map of alarms to their typeNames.
-	ref map<string, RadioNotificationAlarmEvent> alarmMap;
+	/// Map of alarms to their typeNames. See RadioNotificationAlarmEvent for more information.
+	autoptr map<string, RadioNotificationAlarmEvent> alarmMap;
 
-	[NonSerialized()] protected static const string FOLDER = "$profile:RadioNotifications";
-	[NonSerialized()] protected static const string SETTINGS = FOLDER + "\\Settings.json";
+	/// Static alarms to always repeat. See RadioNotificationStaticPair for more information.
+	autoptr array<RadioNotificationStaticAlarmPair> staticAlarms;
 
-	// We detect these
-	[NonSerialized()] int numVoices;
-	[NonSerialized()] int numPhonetics;
-	[NonSerialized()] int numPreambles;
-	[NonSerialized()] int numNoises;
-	[NonSerialized()] int numAlarms;
+	[NonSerialized()]
+	protected static const string FOLDER = "$profile:RadioNotifications";
+	[NonSerialized()]
+	protected static const string SETTINGS = FOLDER + "\\Settings.json";
+
+	/// Automatically detected
+	[NonSerialized()]
+	int numVoices; /// Automatically detected
+	[NonSerialized()]
+	int numPhonetics; /// Automatically detected
+	[NonSerialized()]
+	int numPreambles; /// Automatically detected
+	[NonSerialized()]
+	int numNoises; /// Automatically detected
+	[NonSerialized()]
+	int numAlarms; /// Automatically created
+	[NonSerialized()]
+	autoptr RadioNotificationOneTimePad pad; /// Automatically created
+	[NonSerialized()]
+	int padSeed;
 
 	void RadioNotificationSettings() {
 		eventMap = new map<string, RadioNotificationEvent>();
 		staticEvents = new array<RadioNotificationStaticPair>();
 		alarmMap = new map<string, RadioNotificationAlarmEvent>();
+		staticAlarms = new array<RadioNotificationStaticAlarmPair>();
+		padSeed = Math.RandomIntInclusive(0, 65534);
 	}
 
+	void InitOneTimePad() {
+		pad = new RadioNotificationOneTimePad(padSeed);
+	}
+
+	/// GetOneTimePad returns the OneTimePad for decoding encrypted messages.
+	RadioNotificationOneTimePad GetOneTimePad() {
+		return pad;
+	}
+
+	/// DetectSoundSets is called internally to detect the number of sound sets available.
 	void DetectSoundSets() {
 		while (true) {
 			if (!GetGame().ConfigIsExisting("CfgSoundSets RadioNotification_Voice" + numVoices.ToString() + "_Phonetic0"))
@@ -96,11 +143,9 @@ class RadioNotificationSettings {
 	}
 
 	void ~RadioNotificationSettings() {
-		delete eventMap;
-		delete staticEvents;
-		delete alarmMap;
 	}
 
+	/// Serialize the settings to the client. Called internally.
 	bool SerializeRPC(BitStreamWriter ctx) {
 		if (!ctx.WriteRangedInt(maxDistance, 1000, 20000))
 			return false;
@@ -116,13 +161,12 @@ class RadioNotificationSettings {
 			return false;
 		if (!ctx.WritePacked(disablePlayerBroadcast))
 			return false;
+		if (!ctx.WriteRangedInt(padSeed, 0, 65534))
+			return false;
 		return true;
 	}
 
-	string Dump() {
-		return string.Format("RadioNotificationSettings: %1 %2 %3 %4 %5 %6 %7 %8 %9", maxDistance, baseRadioMultiplier, ignoreDistance, minVolume, maxVolume, radioChannel, randomNoise, disablePlayerBroadcast);
-	}
-
+	/// Deserialize the settings from the client. Called internally.
 	bool DeserializeRPC(BitStreamReader ctx) {
 		if (!ctx.ReadRangedInt(maxDistance, 1000, 20000))
 			return false;
@@ -138,6 +182,11 @@ class RadioNotificationSettings {
 			return false;
 		if (!ctx.ReadPacked(disablePlayerBroadcast))
 			return false;
+		if (!ctx.ReadRangedInt(padSeed, 0, 65534))
+			return false;
+
+		// Setup the one time pad client side
+		InitOneTimePad();
 		return true;
 	}
 
@@ -149,24 +198,31 @@ class RadioNotificationSettings {
 			DefaultSettings();
 			Save();
 		}
+
+		if (version < expectedVersion) {
+			Print("RadioNotificationSettings: Settings version mismatch, updating to " + expectedVersion.ToString() + " from " + version.ToString());
+			version = expectedVersion;
+			Save(); // Save new settings
+		}
+
 		if (maxDistance < 1000) {
-			Error("maxDistance is less than 1000, resetting to 1000");
+			Print("maxDistance is less than 1000, resetting to 1000");
 			maxDistance = 1000;
 		}
 		if (maxDistance > 20000) {
-			Error("maxDistance is greater than 20000, resetting to 20000");
+			Print("maxDistance is greater than 20000, resetting to 20000");
 			maxDistance = 20000;
 		}
 		if (baseRadioMultiplier < 1.0) {
-			Error("baseRadioMultiplier is less than 1.0, resetting to 1.0");
+			Print("baseRadioMultiplier is less than 1.0, resetting to 1.0");
 			baseRadioMultiplier = 1.0;
 		}
 		if (radioChannel < 0) {
-			Error("radioChannel is less than 0, resetting to 0");
+			Print("radioChannel is less than 0, resetting to 0");
 			radioChannel = 0;
 		}
 		if (radioChannel > 7) {
-			Error("radioChannel is greater than 7, resetting to 7");
+			Print("radioChannel is greater than 7, resetting to 7");
 			radioChannel = 7;
 		}
 	}
@@ -180,14 +236,16 @@ class RadioNotificationSettings {
 
 	void DefaultSettings() {
 		maxDistance = 5000;
-		baseRadioMultiplier = 1.75;
+		baseRadioMultiplier = 1.5;
 		ignoreDistance = 1000;
 		minVolume = 0.1;
 		maxVolume = 1.0;
 		radioChannel = 2;
 		disablePlayerBroadcast = true;
-		eventMap.Insert("Wreck_Mi8_Crashed", new RadioNotificationEvent(1, 0, 3, 1, {36, 37, 45, 22, 18, 8, 41, 128, 41, 128, 42}, 1, 600, 5));
-		eventMap.Insert("Wreck_UH1Y", new RadioNotificationEvent(1, 1, 2, 1, {36, 37, 45, 30, 17, 1, 34, 41, 128, 41, 128, 42}, 1, 600, 5));
+
+		eventMap.Insert("Wreck_Mi8_Crashed", new RadioNotificationEvent(1, 0, 3, 1, { 36, 37, 45, 22, 18, 8, 41, 128, 41, 128, 42 }, 1, 600, 3));
+		eventMap.Insert("Wreck_UH1Y", new RadioNotificationEvent(1, 1, 2, 1, { 36, 37, 45, 30, 17, 1, 34, 41, 128, 41, 128, 42 }, 1, 600, 3));
+		eventMap.Insert("StaticObj_Wreck_BRDM_DE", new RadioNotificationEvent(5, 7, 3, 6, { 44, 45, 11, 27, 13, 22, 43, 128, 43, 128, 42 }, 1, 600, 3));
 		alarmMap.Insert("ContaminatedArea_Dynamic", new RadioNotificationAlarmEvent(0));
 	}
 
@@ -207,4 +265,17 @@ class RadioNotificationSettings {
 
 		return null;
 	}
+}
+
+class RadioNotificationStaticPair {
+	vector position;
+	RadioNotificationEvent anEvent; // cant call it event, reserved word
+}
+
+class RadioNotificationStaticAlarmPair {
+	vector position;
+	int delay;
+	RadioNotificationAlarmEvent anEvent; // cant call it event, reserved word
+	[NonSerialized()]
+	int lastTime;
 }

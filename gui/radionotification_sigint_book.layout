@@ -1,0 +1,482 @@
+FrameWidgetClass ContainerWidget {
+ clipchildren 0
+ color 0.7843 0.7843 0.7843 1
+ position 0 0
+ size 1 1
+ halign center_ref
+ valign center_ref
+ hexactpos 0
+ vexactpos 0
+ hexactsize 0
+ vexactsize 0
+ scaled 1
+ priority 50
+ {
+  WindowWidgetClass WindowWidget {
+   color 1 0.7843 1 1
+   position 0 0
+   size 1 0.9
+   halign center_ref
+   valign center_ref
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   style Default
+   {
+    PanelWidgetClass Background {
+     clipchildren 0
+     color 0.4471 0.4471 0.4471 0.0039
+     position 0 0
+     size 1 1
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     scaled 1
+     draggable 0
+     style blank
+    }
+    ButtonWidgetClass PrevButton {
+     visible 1
+     position -0.3 0.06
+     size 0.075 0.04
+     halign center_ref
+     valign bottom_ref
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     userID 102
+     style Default
+     text "#layout_day_z_book_previous"
+    }
+    ButtonWidgetClass NextButton {
+     visible 1
+     position -0.05 0.06
+     size 0.075 0.04
+     halign center_ref
+     valign bottom_ref
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     userID 103
+     style Default
+     text "#layout_day_z_book_next"
+    }
+    ButtonWidgetClass BackBtn1 {
+     visible 1
+     position 0 0.03
+     size 0.05 0.05
+     halign right_ref
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     fixaspect fixwidth
+     userID 2
+     style Default
+     text_offset 1 1
+     text_halign center
+     "text color" 1 1 1 1
+     "disabled text color" 0.3373 0.3373 0.3373 1
+     {
+      ImageWidgetClass IconClose {
+       ignorepointer 1
+       position 0 0
+       size 1 1
+       halign right_ref
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       fixaspect fixwidth
+       image0 "set:dayz_gui image:Close"
+       mode blend
+       "src alpha" 1
+       "no wrap" 1
+       filter 1
+       nocache 0
+      }
+     }
+    }
+    ButtonWidgetClass RipBtn {
+     visible 1
+     position 0.32 0.03
+     size 0.05 0.05
+     halign right_ref
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     fixaspect fixwidth
+     priority 100
+     userID 99564
+     style Default
+     text_offset 1 1
+     text_halign center
+     "text color" 1 1 1 1
+     "disabled text color" 0.3373 0.3373 0.3373 1
+     {
+      ImageWidgetClass IconRip {
+       ignorepointer 1
+       position 0 0
+       size 1 1
+       halign right_ref
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       fixaspect fixwidth
+       priority 100
+       image0 "set:dayz_gui image:icon_minus"
+       mode blend
+       "src alpha" 1
+       "no wrap" 1
+       filter 1
+       nocache 0
+      }
+     }
+    }
+   }
+  }
+  ImageWidgetClass SIGINTBook {
+   visible 1
+   disabled 0
+   clipchildren 0
+   inheritalpha 0
+   ignorepointer 1
+   size 0.65 0.65
+   valign center_ref
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   scaled 1
+   imageTexture "{3B1D09F3FF27C339}RadioNotifications/gui/bookpagebg.edds"
+   mode blend
+   "src alpha" 1
+   "no wrap" 1
+   stretch 1
+   "flip u" 0
+   filter 0
+   {
+    FrameWidgetClass Tabber {
+     visible 1
+     color 0.4706 0.4706 0.4706 0.4706
+     size 0.96 0.96
+     halign center_ref
+     valign center_ref
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     priority 100
+     scriptclass "RadioNotificationBookTabber"
+     {
+      FrameWidgetClass Tab_0 {
+       ignorepointer 1
+       size 1 1
+       halign center_ref
+       valign center_ref
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       scriptclass "RadioNotificationBookTabReportPage"
+      }
+      FrameWidgetClass Tab_1 {
+       ignorepointer 1
+       size 1 1
+       halign center_ref
+       valign center_ref
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       scriptclass "RadioNotificationBookTabCodePage"
+      }
+      FrameWidgetClass Tab_2 {
+       ignorepointer 1
+       size 1 1
+       halign center_ref
+       valign center_ref
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       scriptclass "RadioNotificationBookTabWordPage"
+      }
+      FrameWidgetClass Tab_3 {
+       ignorepointer 1
+       size 1 1
+       halign center_ref
+       valign center_ref
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       scriptclass "RadioNotificationBookTabTablePage"
+      }
+     }
+    }
+   }
+  }
+  ImageWidgetClass DecoderPad {
+   clipchildren 1
+   ignorepointer 1
+   size 0.34 0.75
+   halign right_ref
+   valign center_ref
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   scaled 1
+   imageTexture "{B16A8D7498044A82}RadioNotifications/gui/decoderpad.edds"
+   mode blend
+   "src alpha" 1
+   "no wrap" 1
+   stretch 1
+   {
+    GridSpacerWidgetClass NotepadSpacer {
+     ignorepointer 1
+     position 0.02 0.06
+     size 0.96 0.92
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     scaled 0
+     style Colorable
+     "Size To Content V" 1
+     Columns 1
+     Rows 4
+     {
+      GridSpacerWidgetClass PadSpacer {
+       ignorepointer 1
+       position 0 0
+       size 1 0.01
+       hexactpos 1
+       vexactpos 1
+       hexactsize 0
+       vexactsize 0
+       scaled 0
+       "Size To Content H" 1
+       "Size To Content V" 1
+       Columns 2
+       Rows 1
+       {
+        RichTextWidgetClass PadLabel {
+         clipchildren 0
+         ignorepointer 0
+         color 0 0 0 1
+         position 0.024 0.02
+         size 0.3 1
+         hexactpos 0
+         vexactpos 0
+         hexactsize 0
+         vexactsize 0
+         scaled 1
+         style DayZNormal
+         text "Pad Block: "
+         font "RadioNotifications/gui/fonts/Another24"
+         "text color" 0 0 0 1
+         "exact text" 1
+         "size to text h" 1
+         "size to text v" 1
+        }
+        RichTextWidgetClass PadText {
+         ignorepointer 1
+         color 0 0 0 1
+         position 0.024 0.02
+         size 0.6 1
+         hexactpos 0
+         vexactpos 0
+         hexactsize 0
+         vexactsize 0
+         scaled 1
+         style DayZNormal
+         font "RadioNotifications/gui/fonts/Another24"
+         "text color" 0 0 0 1
+         "exact text" 1
+         "size to text h" 1
+         "size to text v" 0
+        }
+       }
+      }
+      GridSpacerWidgetClass Spacer {
+       clipchildren 0
+       ignorepointer 0
+       position 0 0
+       size 1 0.96
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       scaled 1
+       Columns 1
+       {
+        GridSpacerWidgetClass CipherTextSpacer {
+         ignorepointer 1
+         size 1 0.33
+         hexactpos 1
+         vexactpos 1
+         hexactsize 0
+         vexactsize 0
+         scaled 0
+         "Size To Content V" 1
+         Columns 1
+         {
+          RichTextWidgetClass CipherTextLabel {
+           ignorepointer 1
+           color 0 0 0 1
+           position 0.024 0.02
+           size 0.116 0.2
+           hexactpos 0
+           vexactpos 0
+           hexactsize 0
+           vexactsize 0
+           scaled 1
+           style DayZNormal
+           text "Cipher Text:"
+           font "RadioNotifications/gui/fonts/Another24"
+           "text color" 0 0 0 1
+           "exact text" 1
+           "size to text h" 1
+           "size to text v" 1
+          }
+          RichTextWidgetClass CipherTextText {
+           clipchildren 0
+           ignorepointer 0
+           color 0 0 0 1
+           position 0 0
+           size 4.03813 1
+           hexactpos 0
+           vexactpos 0
+           hexactsize 0
+           vexactsize 0
+           scaled 1
+           fixaspect inside
+           style DayZNormal
+           font "RadioNotifications/gui/fonts/Another24"
+           "text color" 0 0 0 1
+           "exact text" 1
+           "size to text h" 1
+           "size to text v" 0
+           wrap 1
+           "condense whitespace" 1
+          }
+         }
+        }
+        GridSpacerWidgetClass KeySpacer {
+         ignorepointer 1
+         position 0 0
+         size 1 0.33
+         hexactpos 1
+         vexactpos 1
+         hexactsize 0
+         vexactsize 0
+         scaled 0
+         "Size To Content V" 1
+         Columns 1
+         {
+          RichTextWidgetClass KeyLabel {
+           ignorepointer 1
+           color 0 0 0 1
+           position 0.024 0.02
+           size 0.116 0.2
+           hexactpos 0
+           vexactpos 0
+           hexactsize 0
+           vexactsize 0
+           scaled 1
+           style DayZNormal
+           text "Key:"
+           font "RadioNotifications/gui/fonts/Another24"
+           "text color" 0 0 0 1
+           "exact text" 1
+           "size to text h" 1
+           "size to text v" 1
+          }
+          RichTextWidgetClass KeyText {
+           ignorepointer 1
+           color 0 0 0 1
+           position 0.024 0.02
+           size 0.6 0.7231
+           hexactpos 0
+           vexactpos 0
+           hexactsize 0
+           vexactsize 0
+           scaled 1
+           style DayZNormal
+           font "RadioNotifications/gui/fonts/Another24"
+           "text color" 0 0 0 1
+           "exact text" 1
+           "size to text h" 1
+           "size to text v" 0
+           wrap 1
+           "condense whitespace" 1
+          }
+         }
+        }
+        GridSpacerWidgetClass PlainTextSpacer {
+         ignorepointer 1
+         position 0 0
+         size 1 0.33
+         hexactpos 1
+         vexactpos 1
+         hexactsize 0
+         vexactsize 0
+         scaled 0
+         "Size To Content V" 1
+         Columns 1
+         {
+          RichTextWidgetClass PlainTextLabel {
+           ignorepointer 1
+           color 0 0 0 1
+           position 0.024 0.02
+           size 0.116 0.2
+           hexactpos 0
+           vexactpos 0
+           hexactsize 0
+           vexactsize 0
+           scaled 1
+           style DayZNormal
+           text "Plain Text:"
+           font "RadioNotifications/gui/fonts/Another24"
+           "text color" 0 0 0 1
+           "exact text" 1
+           "size to text h" 1
+           "size to text v" 1
+          }
+          RichTextWidgetClass PlainTextText {
+           ignorepointer 1
+           color 0 0 0 1
+           position 0.024 0.02
+           size 0.6 0.8
+           hexactpos 0
+           vexactpos 0
+           hexactsize 0
+           vexactsize 0
+           scaled 1
+           style DayZNormal
+           font "RadioNotifications/gui/fonts/Another24"
+           "text color" 0 0 0 1
+           "exact text" 1
+           "size to text h" 1
+           "size to text v" 0
+           wrap 1
+           "condense whitespace" 1
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

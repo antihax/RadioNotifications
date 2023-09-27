@@ -10,7 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+old/*
 Source/dist*
+Source/temp*
 
 assets
 atlasicons

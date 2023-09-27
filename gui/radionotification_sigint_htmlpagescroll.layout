@@ -1,0 +1,40 @@
+FrameWidgetClass RootFrame {
+    position 0 0
+    size 1 1
+    hexactpos 0
+    vexactpos 0
+    hexactsize 0
+    vexactsize 0
+    {
+    ScrollWidgetClass PageScroll {
+        ignorepointer 0
+        position 0 0
+        size 1 1
+        hexactpos 0
+        vexactpos 0
+        hexactsize 0
+        vexactsize 0
+        "Scrollbar V" 1
+        {
+        HtmlWidgetClass PageText {
+            ignorepointer 1
+            color 0 0 0 0.8196
+            size 1 1
+            halign left
+            valign top
+            hexactpos 0
+            vexactpos 0
+            hexactsize 0
+            vexactsize 0
+            scaled 1
+            fixaspect outside
+            text ""
+            font "system/system"
+            "exact text" 0
+            "size to text h" 1
+            "size to text v" 1
+            "text halign" left
+            wrap 1
+        }}
+    }}
+}

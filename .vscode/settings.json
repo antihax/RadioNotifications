@@ -1,5 +1,5 @@
 {
-  "clang-format.assumeFilename": "hello.java",
+  "clang-format.assumeFilename": "hello.cs",
   "editor.formatOnSave": true,
   "C_Cpp.dimInactiveRegions": false
 }

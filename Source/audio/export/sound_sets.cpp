@@ -4,6 +4,11 @@
             soundShaders[] = {"RadioNotification_Alarm0_SoundShader"};
         };
 
+        class RadioNotification_Alarm1: RadioNotification_Alarm_SoundSet
+        {
+            soundShaders[] = {"RadioNotification_Alarm1_SoundShader"};
+        };
+
         class RadioNotification_Preamble0: RadioNotification_SoundSet
         {
             soundShaders[] = {"RadioNotification_Preamble0_SoundShader"};
@@ -49,53 +54,73 @@
             soundShaders[] = {"RadioNotification_Preamble8_SoundShader"};
         };
 
-        class RadioNotification_Noise0: RadioNotification_SoundSet
+        class RadioNotification_Preamble9: RadioNotification_SoundSet
         {
-            soundShaders[] = {"RadioNotification_Noise0_SoundShader"};
-            loop = 1;
+            soundShaders[] = {"RadioNotification_Preamble9_SoundShader"};
         };
 
-        class RadioNotification_Noise1: RadioNotification_SoundSet
+        class RadioNotification_Preamble10: RadioNotification_SoundSet
         {
-            soundShaders[] = {"RadioNotification_Noise1_SoundShader"};
-            loop = 1;
+            soundShaders[] = {"RadioNotification_Preamble10_SoundShader"};
         };
 
-        class RadioNotification_Noise2: RadioNotification_SoundSet
+        class RadioNotification_Preamble11: RadioNotification_SoundSet
         {
-            soundShaders[] = {"RadioNotification_Noise2_SoundShader"};
-            loop = 1;
+            soundShaders[] = {"RadioNotification_Preamble11_SoundShader"};
         };
 
-        class RadioNotification_Noise3: RadioNotification_SoundSet
+        class RadioNotification_Preamble12: RadioNotification_SoundSet
         {
-            soundShaders[] = {"RadioNotification_Noise3_SoundShader"};
-            loop = 1;
+            soundShaders[] = {"RadioNotification_Preamble12_SoundShader"};
         };
 
-        class RadioNotification_Noise4: RadioNotification_SoundSet
-        {
-            soundShaders[] = {"RadioNotification_Noise4_SoundShader"};
-            loop = 1;
-        };
+            class RadioNotification_Noise0: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise0_SoundShader"};
+                loop = 1;
+            };
 
-        class RadioNotification_Noise5: RadioNotification_SoundSet
-        {
-            soundShaders[] = {"RadioNotification_Noise5_SoundShader"};
-            loop = 1;
-        };
+            class RadioNotification_Noise1: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise1_SoundShader"};
+                loop = 1;
+            };
 
-        class RadioNotification_Noise6: RadioNotification_SoundSet
-        {
-            soundShaders[] = {"RadioNotification_Noise6_SoundShader"};
-            loop = 1;
-        };
+            class RadioNotification_Noise2: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise2_SoundShader"};
+                loop = 1;
+            };
 
-        class RadioNotification_Noise7: RadioNotification_SoundSet
-        {
-            soundShaders[] = {"RadioNotification_Noise7_SoundShader"};
-            loop = 1;
-        };
+            class RadioNotification_Noise3: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise3_SoundShader"};
+                loop = 1;
+            };
+
+            class RadioNotification_Noise4: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise4_SoundShader"};
+                loop = 1;
+            };
+
+            class RadioNotification_Noise5: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise5_SoundShader"};
+                loop = 1;
+            };
+
+            class RadioNotification_Noise6: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise6_SoundShader"};
+                loop = 1;
+            };
+
+            class RadioNotification_Noise7: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise7_SoundShader"};
+                loop = 1;
+            };
 
             class RadioNotification_Voice0_Phonetic0: RadioNotification_SoundSet
             {

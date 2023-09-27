@@ -5,3 +5,5 @@ IndentWidth: 4
 TabWidth: 4
 ColumnLimit: 0
 RemoveBracesLLVM: true
+ReflowComments: false
+AlignAfterOpenBracket: DontAlign

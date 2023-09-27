@@ -97,7 +97,8 @@ The eventMap allows events to be broadcast when a new BuildingBase is created.
             ],
             "pause": 1,
             "delay": 300,
-            "repeat": 5
+            "repeat": 5,
+            "message": ""
         }
     }
 ```
@@ -122,7 +123,8 @@ The array staticEvents provides constantly looping notifications for a fixed wor
                 "phonetics": [1,2,3,4,5,6],
                 "pause": 1,
                 "delay": 900,
-                "repeat": 0
+                "repeat": 0,
+                "message": ""
             }
         }
     ]
@@ -130,15 +132,34 @@ The array staticEvents provides constantly looping notifications for a fixed wor
 
 ## alarmMap
 
-The alarmMap links BaseBuilding classes to alarms. At this time there is only a single airraid alarm used mostly for `ContaminatedArea_Dynamic` aka the Toxic Artillery Strike.
+The alarmMap links BaseBuilding classes to alarms. At this time there is only an airraid alarm used mostly for `ContaminatedArea_Dynamic` aka the Toxic Artillery Strike or a Fog Horn. Fixed will play at a location in space instead of on the PA system.
 
 ```json
     "alarmMap": {
         "ContaminatedArea_Dynamic": {
             "alarm": 0,
-            "radius": 100
+            "radius": 100,
+            "fixed": 0
         }
     }
+```
+
+## staticAlarms
+
+Repeatable alarms (such as the foghorn) to draw attention to areas.
+
+```json
+  "staticAlarms": [
+    {
+      "position": [6194.0, 20.0, 2386.0],
+      "delay": 300,
+      "anEvent": {
+        "alarm": 1,
+        "radius": 500,
+        "fixed": 0
+      }
+    }
+  ]
 ```
 
 ## RadioNotificationEvent
@@ -147,7 +168,7 @@ RadioNotificationEvent are the core data structure and have the following compon
 
 ### preamble `int`
 
-The initial burst during the transmission. 255 disables. Range is 0 through 8.
+The initial burst during the transmission. -1 disables. Range is 0 through 12.
 
 ### voice `int`
 
@@ -159,7 +180,7 @@ The background static noise for the broadcast. Current range is 0 through 7.
 
 ### signature `int`
 
-Same samples as preamble, the final burst during transmission. 255 disables.
+Same samples as preamble, the final burst during transmission. -1 disables.
 
 ### phonetics
 
@@ -177,6 +198,11 @@ Delay in seconds between repeating the notification. Shall be significant enough
 
 Number of times to repeat the notification before no longer sending furtern notifications. A value of 0 repeats forever or the entity is destroyed. It is not guaranteed that all BuildingBase objects are removed.
 
+### message `string`
+
+Alphanumeric message that will be encrypted and read out as numbers to be decoded by the SIG int book. Message is played after phonetics and must be kept short.
+The book type (Book_RadioNotificationsSIGINT) will need to be added to a loot pool for players to find. Use for messages to draw attention to areas or to deliver codes to unlock boxes, etc.
+
 # API
 
 [API Documentation](API.md) is provided separately due to size.
@@ -184,6 +210,6 @@ Number of times to repeat the notification before no longer sending furtern noti
 # Credits
 
 - Helkhiana - Consulting, testing, sanity.
-- Pixabay: the base source for the air-raid siren sample.
+- Pixabay: the base source for the air-raid siren sample and other sounds. CC0
 - Narakeet: the licensed base source for voice audio.
 - [Enfusion Modders Discord](https://discord.com/invite/enfusionmodders) A community built around modding Enfusion powered games such as DayZ and Arma Reforger.

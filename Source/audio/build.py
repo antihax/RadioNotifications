@@ -10,6 +10,10 @@
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import os
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if file.endswith(".asd"):
+            os.remove(os.path.join(root, file))
 
 num_voices = 10
 num_samples = 54
@@ -53,7 +57,7 @@ def split_file_on_silence(voice: int):
 
     for i, chunk in enumerate(chunks):
         # Add some silence to the beginning and end of the chunk.
-        silence_chunk = AudioSegment.silent(duration=225)
+        silence_chunk = AudioSegment.silent(duration=100)
 
         # Add the padding chunk to beginning and end of the entire chunk.
         audio_chunk = silence_chunk + chunk + silence_chunk
@@ -75,11 +79,11 @@ sound_shaders = []
 sound_sets = []
 
 print("Converting alarms...")
-c = 0
-for file in os.listdir("./alarms"):
+
+for c, file in enumerate(sorted(os.listdir("./alarms"), key=lambda x: int(x[:-4]))):
   if file.endswith(".wav"):
     convertFile("./alarms/"+file, "alarms", c, -5) 
-    print(c)
+    print(c, file)
     sound_shaders.append("""
         class RadioNotification_Alarm%d_SoundShader: RadioNotification_Alarm_SoundShader
         {
@@ -93,14 +97,12 @@ for file in os.listdir("./alarms"):
         {
             soundShaders[] = {"RadioNotification_Alarm%d_SoundShader"};
         };""" % (c, c))    
-    c+=1
 
 print("Converting preambles...")
-c = 0
-for file in os.listdir("./preambles"):
+for c, file in enumerate(sorted(os.listdir("./preambles"), key=lambda x: int(x[:-4]))):
   if file.endswith(".wav"):
     convertFile("./preambles/"+file, "preambles", c)
-    print(c)
+    print(c, file)
     sound_shaders.append("""
         class RadioNotification_Preamble%d_SoundShader: RadioNotification_SoundShader
         {
@@ -112,28 +114,27 @@ for file in os.listdir("./preambles"):
         {
             soundShaders[] = {"RadioNotification_Preamble%d_SoundShader"};
         };""" % (c, c))    
-    c+=1
+   
 
 print("Converting noise...")
-c = 0
-for file in os.listdir("./noise"):
-  if file.endswith(".wav"):
-    convertFile("./noise/"+file, "noise", c)
-    print(c)
+for c, file in enumerate(sorted(os.listdir("./noise"), key=lambda x: int(x[:-4]))):
+    if file.endswith(".wav"):
+        convertFile("./noise/"+file, "noise", c)
+        print(c, file)
+
+        sound_shaders.append("""
+            class RadioNotification_Noise%d_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\\sounds\\noise\%d",1}};
+            };""" % (c, c))
+
+        sound_sets.append("""
+            class RadioNotification_Noise%d: RadioNotification_SoundSet
+            {
+                soundShaders[] = {"RadioNotification_Noise%d_SoundShader"};
+                loop = 1;
+            };""" % (c, c))
     
-    sound_shaders.append("""
-        class RadioNotification_Noise%d_SoundShader: RadioNotification_SoundShader
-        {
-            samples[] = {{"RadioNotifications\\sounds\\noise\%d",1}};
-        };""" % (c, c))
-    
-    sound_sets.append("""
-        class RadioNotification_Noise%d: RadioNotification_SoundSet
-        {
-            soundShaders[] = {"RadioNotification_Noise%d_SoundShader"};
-            loop = 1;
-        };""" % (c, c))        
-    c+=1
 
 print("Converting phonetics...")
 for i in range(num_voices):

@@ -6,6 +6,13 @@
 		    range = 2000;
         };
 
+        class RadioNotification_Alarm1_SoundShader: RadioNotification_Alarm_SoundShader
+        {
+            samples[] = {{"RadioNotifications\sounds\alarms\1",1}};
+            volume = 0.8;
+		    range = 2000;
+        };
+
         class RadioNotification_Preamble0_SoundShader: RadioNotification_SoundShader
         {
             samples[] = {{"RadioNotifications\sounds\preambles\0",1}};
@@ -51,45 +58,65 @@
             samples[] = {{"RadioNotifications\sounds\preambles\8",1}};
         };
 
-        class RadioNotification_Noise0_SoundShader: RadioNotification_SoundShader
+        class RadioNotification_Preamble9_SoundShader: RadioNotification_SoundShader
         {
-            samples[] = {{"RadioNotifications\sounds\noise\0",1}};
+            samples[] = {{"RadioNotifications\sounds\preambles\9",1}};
         };
 
-        class RadioNotification_Noise1_SoundShader: RadioNotification_SoundShader
+        class RadioNotification_Preamble10_SoundShader: RadioNotification_SoundShader
         {
-            samples[] = {{"RadioNotifications\sounds\noise\1",1}};
+            samples[] = {{"RadioNotifications\sounds\preambles\10",1}};
         };
 
-        class RadioNotification_Noise2_SoundShader: RadioNotification_SoundShader
+        class RadioNotification_Preamble11_SoundShader: RadioNotification_SoundShader
         {
-            samples[] = {{"RadioNotifications\sounds\noise\2",1}};
+            samples[] = {{"RadioNotifications\sounds\preambles\11",1}};
         };
 
-        class RadioNotification_Noise3_SoundShader: RadioNotification_SoundShader
+        class RadioNotification_Preamble12_SoundShader: RadioNotification_SoundShader
         {
-            samples[] = {{"RadioNotifications\sounds\noise\3",1}};
+            samples[] = {{"RadioNotifications\sounds\preambles\12",1}};
         };
 
-        class RadioNotification_Noise4_SoundShader: RadioNotification_SoundShader
-        {
-            samples[] = {{"RadioNotifications\sounds\noise\4",1}};
-        };
+            class RadioNotification_Noise0_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\0",1}};
+            };
 
-        class RadioNotification_Noise5_SoundShader: RadioNotification_SoundShader
-        {
-            samples[] = {{"RadioNotifications\sounds\noise\5",1}};
-        };
+            class RadioNotification_Noise1_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\1",1}};
+            };
 
-        class RadioNotification_Noise6_SoundShader: RadioNotification_SoundShader
-        {
-            samples[] = {{"RadioNotifications\sounds\noise\6",1}};
-        };
+            class RadioNotification_Noise2_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\2",1}};
+            };
 
-        class RadioNotification_Noise7_SoundShader: RadioNotification_SoundShader
-        {
-            samples[] = {{"RadioNotifications\sounds\noise\7",1}};
-        };
+            class RadioNotification_Noise3_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\3",1}};
+            };
+
+            class RadioNotification_Noise4_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\4",1}};
+            };
+
+            class RadioNotification_Noise5_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\5",1}};
+            };
+
+            class RadioNotification_Noise6_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\6",1}};
+            };
+
+            class RadioNotification_Noise7_SoundShader: RadioNotification_SoundShader
+            {
+                samples[] = {{"RadioNotifications\sounds\noise\7",1}};
+            };
 
             class RadioNotification_Voice0_Phonetic0_SoundShader: RadioNotification_SoundShader
             {
