@@ -58,16 +58,16 @@ class RadioNotificationSettings {
 	bool disablePlayerBroadcast;
 
 	/// Map of events to their typeNames. See RadioNotificationEvent for more information.
-	autoptr map<string, RadioNotificationEvent> eventMap;
+	autoptr map<string, ref RadioNotificationEvent> eventMap;
 
 	/// Static events to always repeat. See RadioNotificationStaticPair for more information.
-	autoptr array<RadioNotificationStaticPair> staticEvents;
+	autoptr array<ref RadioNotificationStaticPair> staticEvents;
 
 	/// Map of alarms to their typeNames. See RadioNotificationAlarmEvent for more information.
-	autoptr map<string, RadioNotificationAlarmEvent> alarmMap;
+	autoptr map<string, ref RadioNotificationAlarmEvent> alarmMap;
 
 	/// Static alarms to always repeat. See RadioNotificationStaticPair for more information.
-	autoptr array<RadioNotificationStaticAlarmPair> staticAlarms;
+	autoptr array<ref RadioNotificationStaticAlarmPair> staticAlarms;
 
 	[NonSerialized()]
 	protected static const string FOLDER = "$profile:RadioNotifications";
@@ -91,10 +91,10 @@ class RadioNotificationSettings {
 	int padSeed;
 
 	void RadioNotificationSettings() {
-		eventMap = new map<string, RadioNotificationEvent>();
-		staticEvents = new array<RadioNotificationStaticPair>();
-		alarmMap = new map<string, RadioNotificationAlarmEvent>();
-		staticAlarms = new array<RadioNotificationStaticAlarmPair>();
+		eventMap = new map<string, ref RadioNotificationEvent>();
+		staticEvents = new array<ref RadioNotificationStaticPair>();
+		alarmMap = new map<string, ref RadioNotificationAlarmEvent>();
+		staticAlarms = new array<ref RadioNotificationStaticAlarmPair>();
 		padSeed = Math.RandomIntInclusive(0, 65534);
 	}
 
@@ -135,11 +135,11 @@ class RadioNotificationSettings {
 			++numAlarms;
 		}
 
-		Print("RadioNotification: Found " + numNoises.ToString() + " noise types");
-		Print("RadioNotification: Found " + numVoices.ToString() + " voice types");
-		Print("RadioNotification: Found " + numPreambles.ToString() + " preamble types");
-		Print("RadioNotification: Found " + numPhonetics.ToString() + " phonetic types");
-		Print("RadioNotification: Found " + numAlarms.ToString() + " alarm types");
+		Print("RadioNotifications: Found " + numNoises.ToString() + " noise types");
+		Print("RadioNotifications: Found " + numVoices.ToString() + " voice types");
+		Print("RadioNotifications: Found " + numPreambles.ToString() + " preamble types");
+		Print("RadioNotifications: Found " + numPhonetics.ToString() + " phonetic types");
+		Print("RadioNotifications: Found " + numAlarms.ToString() + " alarm types");
 	}
 
 	void ~RadioNotificationSettings() {

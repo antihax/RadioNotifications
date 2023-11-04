@@ -141,7 +141,7 @@ class RadioNotificationAlarmEvent {
 		auto settings = RadioNotificationSettings.GetSettings();
 		if (!ctx.WriteRangedInt(alarm, 0, settings.numAlarms))
 			return false;
-		if (!ctx.WriteRangedInt(radius, 100, 1000))
+		if (!ctx.WriteRangedInt(radius / 10, 0, 1000))
 			return false;
 		if (!ctx.WritePacked(fixed))
 			return false;
@@ -152,8 +152,9 @@ class RadioNotificationAlarmEvent {
 		auto settings = RadioNotificationSettings.GetSettings();
 		if (!ctx.ReadRangedInt(alarm, 0, settings.numAlarms))
 			return false;
-		if (!ctx.ReadRangedInt(radius, 100, 1000))
+		if (!ctx.ReadRangedInt(radius, 0, 1000))
 			return false;
+		radius *= 10;
 		if (!ctx.ReadPacked(fixed))
 			return false;
 		return ctx.ReadHalfVector(position);

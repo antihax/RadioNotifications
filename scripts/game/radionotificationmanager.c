@@ -72,7 +72,7 @@ class RadioNotificationManager {
 		if (e) {
 			if (!e.lastTime || (GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
 				SendRadioNotificationEvent(e);
-				e.lastTime = e.GetGame().GetTime();
+				e.lastTime = GetGame().GetTime();
 
 				// Delete the event if it has repeats expires
 				if (e.repeat > 0) {
@@ -102,7 +102,7 @@ class RadioNotificationManager {
 		if (e) {
 			if (!e.lastTime || (GetGame().GetTime() - e.lastTime) / 1000 > e.delay) {
 				SendRadioNotificationAlarmEvent(e.anEvent);
-				e.lastTime = e.GetGame().GetTime();
+				e.lastTime = GetGame().GetTime();
 			}
 		}
 	}
@@ -159,7 +159,6 @@ class RadioNotificationManager {
 	// Add a new RadioNotificationAlarmEvent to the queue.
 	// Get a unique ID for a transmission
 	int AddAlarm(RadioNotificationStaticAlarmPair e) {
-		Print("add alarm");
 		++m_TransmissionID;
 		m_ActiveAlarms.Insert(m_TransmissionID, e);
 		m_AlarmIDs.Insert(m_TransmissionID);

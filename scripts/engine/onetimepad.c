@@ -262,15 +262,6 @@ class RadioNotificationOneTimePad {
 				list += keyPads[index].ToString();
 			}
 		}
-
-		/*string src = "THIS IS A TEST LETTER PICTURE 123 SOMETHING 444 SHOULD RUN FROM PEOPLE";
-		string test1 = Encode(src);
-		string test2 = Decode(test1);
-		string test3 = (0, src);
-		Print(src);
-		Print("Test1: " + test1);
-		Print("Test2: " + test2);
-		Print("Test3: " + test3);*/
 	}
 
 	/**
@@ -476,7 +467,6 @@ class RadioNotificationOneTimePad {
 	 * @return The encrypted text, including the key used for encryption.
 	 */
 	protected string Encrypt(int padIndex, string plainText) {
-		Print(plainText);
 		string cipherText = plainText;
 		for (int i = 0; i < plainText.Length(); ++i) {
 			int keyIndex = (padIndex * KEY_SIZE + i + 5) % TOTAL_PAD_SIZE;

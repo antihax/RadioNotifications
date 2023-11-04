@@ -101,7 +101,7 @@ class RadioNotificationTransmitterContext {
 				p = m_CurrentRadioNotificationEvent.phonetics.Get(0);
 				m_CurrentRadioNotificationEvent.phonetics.RemoveOrdered(0);
 				if (p < 0) {
-					Print("RadioNotification::NextSegment Invalid phonetic " + p.ToString());
+					Print("RadioNotificationTransmitterContext::NextSegment Invalid phonetic " + p.ToString());
 					m_CurrentRadioNotificationEvent.state = 4;
 					break;
 				}
@@ -116,7 +116,7 @@ class RadioNotificationTransmitterContext {
 				p = m_CurrentRadioNotificationEvent.message[0].ToInt();
 				m_CurrentRadioNotificationEvent.message = m_CurrentRadioNotificationEvent.message.Substring(1, m_CurrentRadioNotificationEvent.message.Length() - 1);
 				if (p < 0) {
-					Print("RadioNotification::NextSegment Invalid Message " + p.ToString());
+					Print("RadioNotificationTransmitterContext::NextSegment Invalid Message " + p.ToString());
 					m_CurrentRadioNotificationEvent.state = 4;
 					break;
 				}
@@ -142,8 +142,6 @@ class RadioNotificationTransmitterContext {
 		} else
 			NextSegment();
 	}
-
-
 
 	void Event_OnSoundWaveStarted() {
 		m_PlayingVoice = true;
@@ -193,7 +191,7 @@ class RadioNotificationTransmitterContext {
 
 		// Check it wasn't deleted while we dequeued.
 		if (!m_CurrentRadioNotificationEvent) {
-			Print("RadioNotification::RunVoiceDequeue m_CurrentRadioNotificationEvent is null");
+			Print("RadioNotificationTransmitterContext::RunVoiceDequeue m_CurrentRadioNotificationEvent is null");
 			NoiseStop();
 			return;
 		}
@@ -224,7 +222,7 @@ class RadioNotificationTransmitterContext {
 		if (notify) {
 			// Set a timeout to kill the sound if it doesn't start.
 			m_ActiveVoiceCancelTimer.Run(s.GetLength() + 1.5, this, "NextSegment", null, false);
-			m_ActiveNoiseCancelTimer.Run(s.GetLength() + 5, this, "NoiseStop", null, false);
+			m_ActiveNoiseCancelTimer.Run(s.GetLength() + 10, this, "NoiseStop", null, false);
 
 			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStarted);
 			s.Event_OnSoundWaveStarted.Insert(Event_OnSoundWaveStartedVolumes);
