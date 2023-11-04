@@ -34,10 +34,10 @@ title: RadioNotificationSettings
 | -------------- | -------------- |
 | protected const string | **[FOLDER](class_radio_notification_settings.md#variable-folder)**  |
 | protected const string | **[SETTINGS](class_radio_notification_settings.md#variable-settings)**  |
-| autoptr map< string, RadioNotificationAlarmEvent > | **[alarmMap](class_radio_notification_settings.md#variable-alarmmap)** <br>Map of alarms to their typeNames. See RadioNotificationAlarmEvent for more information.  |
+| autoptr map< string, ref RadioNotificationAlarmEvent > | **[alarmMap](class_radio_notification_settings.md#variable-alarmmap)** <br>Map of alarms to their typeNames. See RadioNotificationAlarmEvent for more information.  |
 | float | **[baseRadioMultiplier](class_radio_notification_settings.md#variable-baseradiomultiplier)** <br>Multiplier for base radios.  |
 | bool | **[disablePlayerBroadcast](class_radio_notification_settings.md#variable-disableplayerbroadcast)** <br>Disable players broadcasting on the radio.  |
-| autoptr map< string, [RadioNotificationEvent](class_radio_notification_event.md) > | **[eventMap](class_radio_notification_settings.md#variable-eventmap)** <br>Map of events to their typeNames. See [RadioNotificationEvent](class_radio_notification_event.md) for more information.  |
+| autoptr map< string, ref [RadioNotificationEvent](class_radio_notification_event.md) > | **[eventMap](class_radio_notification_settings.md#variable-eventmap)** <br>Map of events to their typeNames. See [RadioNotificationEvent](class_radio_notification_event.md) for more information.  |
 | const int | **[expectedVersion](class_radio_notification_settings.md#variable-expectedversion)** <br>Expected version, used to detect if settings need to be reset. Not user configurable.  |
 | int | **[ignoreDistance](class_radio_notification_settings.md#variable-ignoredistance)** <br>Falloff to ignore transmissions.  |
 | ref [RadioNotificationSettings](class_radio_notification_settings.md) | **[m_Settings](class_radio_notification_settings.md#variable-m-settings)**  |
@@ -53,8 +53,8 @@ title: RadioNotificationSettings
 | int | **[padSeed](class_radio_notification_settings.md#variable-padseed)** <br>Automatically created.  |
 | int | **[radioChannel](class_radio_notification_settings.md#variable-radiochannel)** <br>Radio Channel Broadcast.  |
 | bool | **[randomNoise](class_radio_notification_settings.md#variable-randomnoise)** <br>Enable randomize noise to minimize predicting the message type.  |
-| autoptr array< [RadioNotificationStaticAlarmPair](class_radio_notification_static_alarm_pair.md) > | **[staticAlarms](class_radio_notification_settings.md#variable-staticalarms)** <br>Static alarms to always repeat. See RadioNotificationStaticPair for more information.  |
-| autoptr array< RadioNotificationStaticPair > | **[staticEvents](class_radio_notification_settings.md#variable-staticevents)** <br>Static events to always repeat. See RadioNotificationStaticPair for more information.  |
+| autoptr array< ref [RadioNotificationStaticAlarmPair](class_radio_notification_static_alarm_pair.md) > | **[staticAlarms](class_radio_notification_settings.md#variable-staticalarms)** <br>Static alarms to always repeat. See RadioNotificationStaticPair for more information.  |
+| autoptr array< ref RadioNotificationStaticPair > | **[staticEvents](class_radio_notification_settings.md#variable-staticevents)** <br>Static events to always repeat. See RadioNotificationStaticPair for more information.  |
 | int | **[version](class_radio_notification_settings.md#variable-version)** <br>Current version, used to detect if settings need to be reset. Not user configurable.  |
 
 ## Detailed Description
@@ -199,7 +199,7 @@ static protected const string SETTINGS = FOLDER + "\\Settings.json";
 ### variable alarmMap
 
 ```cpp
-autoptr map< string, RadioNotificationAlarmEvent > alarmMap;
+autoptr map< string, ref RadioNotificationAlarmEvent > alarmMap;
 ```
 
 Map of alarms to their typeNames. See RadioNotificationAlarmEvent for more information. 
@@ -223,7 +223,7 @@ Disable players broadcasting on the radio.
 ### variable eventMap
 
 ```cpp
-autoptr map< string, RadioNotificationEvent > eventMap;
+autoptr map< string, ref RadioNotificationEvent > eventMap;
 ```
 
 Map of events to their typeNames. See [RadioNotificationEvent](class_radio_notification_event.md) for more information. 
@@ -350,7 +350,7 @@ Enable randomize noise to minimize predicting the message type.
 ### variable staticAlarms
 
 ```cpp
-autoptr array< RadioNotificationStaticAlarmPair > staticAlarms;
+autoptr array< ref RadioNotificationStaticAlarmPair > staticAlarms;
 ```
 
 Static alarms to always repeat. See RadioNotificationStaticPair for more information. 
@@ -358,7 +358,7 @@ Static alarms to always repeat. See RadioNotificationStaticPair for more informa
 ### variable staticEvents
 
 ```cpp
-autoptr array< RadioNotificationStaticPair > staticEvents;
+autoptr array< ref RadioNotificationStaticPair > staticEvents;
 ```
 
 Static events to always repeat. See RadioNotificationStaticPair for more information. 
@@ -373,4 +373,4 @@ Current version, used to detect if settings need to be reset. Not user configura
 
 -------------------------------
 
-Updated on 2023-09-27 at 14:30:58 -0500
+Updated on 2023-11-04 at 11:33:00 -0500
