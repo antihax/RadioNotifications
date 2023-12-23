@@ -91,14 +91,9 @@ class RadioNotificationClientHandler {
 		int gridX, gridZ;
 		float GRID_SIZE = GetGame().ConfigGetFloat(string.Format(GRID_SIZE_CFG_PATH, GetGame().GetWorldName()));
 		GetGame().GetWorld().GetGridCoords(e.position, GRID_SIZE, gridX, gridZ);
-		if (gridX < 0) {
-			gridX = 0;
-			Error("RadioNotifications: GridX is less than 0");
-		}
-		if (gridZ < 0) {
-			gridZ = 0;
-			Error("RadioNotifications: GridZ is less than 0");
-		}
+		gridX = Math.AbsInt(gridX);
+		gridZ = Math.AbsInt(gridZ);
+
 		array<int> p = {};
 		for (int i = 0; i < e.phonetics.Count(); i++) {
 			switch (e.phonetics[i]) {
